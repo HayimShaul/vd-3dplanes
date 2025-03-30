@@ -165,14 +165,11 @@ def find_cell_vertices(cell) -> list[Point3D]:
     
     # Find intersections at x boundaries if they exist
     for x in x_values:
-        print("x")
         point1 = Point3D(x, 0, 0)
         for y_bound in y_bounds:
-            print("y")
             y_bound = project.project(y_bound, "xy", 'z')
             point2 = project.project(point1, y_bound, 'y')
             for z_bound in z_bounds:
-                print("z")
                 point3 = project.project(point2, z_bound, 'z')
             
                 vertices.append(point3)
@@ -258,3 +255,23 @@ def is_point_in_cell_or_on_boundary(p: Point3D, cell) -> bool:
             return False
             
     return True
+
+
+def is_intersecting_cell(plane, cell, endpoints):
+    """
+    Check if a plane intersects a cell.
+    """
+    if endpoints is None:
+        endpoints = find_cell_vertices(cell)
+    
+    above = False
+    below = False
+    for endpoint in endpoints:
+        height = z_dist.height(endpoint, plane, 'z')
+        if height > 0:
+            above = True
+        else:
+            below = True
+        if  above and below:
+            return True
+    return False
