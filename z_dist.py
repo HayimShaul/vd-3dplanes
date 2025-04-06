@@ -53,11 +53,26 @@ def height_point_line(point: Point3D, line: Line3D, axis: str):
     """Returns the height of point above line."""
     
     if axis == 'z':
-        return height_point_plane(point, Plane(line.p1, line.p2, line.p1 + Point3D(0,0,1)), 'y')
-    elif axis == 'y':
         # If line is vertical (parallel to y-axis), height is undefined
         if line.direction.x == 0 and line.direction.y == 0:
             raise ValueError("cannot compute height of point above a z-vertical line")
+        
+        # Find t where line.p1 + t*direction has x coordinate equal to point.x
+        # line.p1.x + t*direction.x = point.x
+        if line.direction.x != 0:
+            t = (point.x - line.p1.x) / line.direction.x
+        else:
+            t = (point.y - line.p1.y) / line.direction.y
+        
+        # Get z coordinate at this t
+        z = line.p1.z + t * line.direction.z
+        
+        # Return height (difference in z coordinates)
+        return point.z - z
+    elif axis == 'y':
+        # If line is vertical (parallel to y-axis), height is undefined
+        if line.direction.x == 0 and line.direction.z == 0:
+            raise ValueError("cannot compute height of point above a y-vertical line")
         
         # Find t where line.p1 + t*direction has x coordinate equal to point.x
         # line.p1.x + t*direction.x = point.x
