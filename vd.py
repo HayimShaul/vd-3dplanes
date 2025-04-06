@@ -161,9 +161,9 @@ def vd2d(p : Plane, p_segs):
 
 def vd(planes):
     # the intersection lines of the planes when broken into segments by points projected from above and below
+    # the segments on the upper face of the plane. These segments are the intersection lines on this plane as well as  intersection segments of other planes projected onto it.
     intersect_segs_above = {}
     intersect_segs_below = {}
-    # the segments on the upper face of the plane. These segments are the intersection lines on this plane as well as  intersection segments of other planes projected onto it.
     segs_above = {}
     segs_below = {}
     intersection_lines = {}
@@ -203,7 +203,9 @@ def vd(planes):
                 break_points_above.append(int_point)
                 break_points_below.append(int_point) 
 
+                # find 2 intersection lines that intersect on their projection onto the xy plane
                 for s_peer in intersection_lines[planes[j]]:
+                    # if they actually intersect then their intersection point was already added as an intersection point of 3 planes
                     if intersection.intersect(s_peer, s_focus) != []:
                         continue
                     s_peer_proj = project.project(s_peer, "xy", 'z')
@@ -447,8 +449,9 @@ def visualize_3d_cells(planes, cells_list):
                     point = intersection.intersect(int, wall)[0]
                     if point.x <= 10 and point.x >= -10 and point.y <= 10 and point.y >= -10 and point.z <= 10 and point.z >= -10:
                         points.append(point)
-            poly = Poly3DCollection([points], alpha=0.5, color='cyan', edgecolor='k')
-            ax.add_collection3d(poly)
+            if points != []:
+                poly = Poly3DCollection([points], alpha=0.5, color='cyan', edgecolor='k')
+                ax.add_collection3d(poly)
     print("done")
     
     # Generate distinct colors for cells
@@ -485,6 +488,121 @@ def visualize_3d_cells(planes, cells_list):
     
     plt.show()
 
+def test_vd2d_slanted():
+    global points_above
+    global points_below
+
+    # Create XY plane at z=0
+    slanted_plane = Plane(Point3D(0,0,1), Point3D(1,0,2), Point3D(0,1,3))
+    
+    # Initialize empty list for segments
+    segs = []
+
+    # Generate 10 random segments on XY plane
+    while len(segs) < 3:
+        # Generate random points on XY plane
+        p1 = Point3D(random.uniform(-10,10), random.uniform(-10,10), 0)
+        p1 = project.project(p1, slanted_plane, 'z')
+        p2 = Point3D(random.uniform(-10,10), random.uniform(-10,10), 0)
+        p2 = project.project(p2, slanted_plane, 'z')
+        seg = Segment3D(p1, p2)
+        segs.append(seg)
+            
+    # Generate 10 random rays on XY plane
+    for i in range(3):
+        # Generate random point and direction on XY plane
+        p = Point3D(random.uniform(-10,10), random.uniform(-10,10), 0)
+        p = project.project(p, slanted_plane, 'z')
+        dir = Point3D(random.uniform(-1,1), random.uniform(-1,1), 0)
+        dir = project.project(dir, slanted_plane, 'z')
+        ray = Ray3D(p, dir)
+        segs.append(ray)
+
+    # Calculate Voronoi diagram cells
+    cells_list = []
+    points_above = {}
+    points_below = {}
+    cells_list = vd2d(slanted_plane, segs)
+
+    # Draw visualization
+    plt.figure(figsize=(10,10))
+    
+    # Draw segments and rays
+    for s in segs:
+        if isinstance(s, Segment3D):
+            plt.plot([float(s.p1.x), float(s.p2.x)], 
+                    [float(s.p1.y), float(s.p2.y)], 'b-')
+        else: # Ray3D
+            # Convert direction components to float for plotting
+            dx = float(s.direction.x)
+            dy = float(s.direction.y)
+            # Normalize direction vector to fixed length for visualization
+            length = 2.0  # Adjust this value to change arrow length
+            norm = (dx * dx + dy * dy) ** 0.5
+            dx = dx * length / norm
+            dy = dy * length / norm
+            plt.arrow(float(s.p1.x), float(s.p1.y), dx, dy,
+                     head_width=0.3, head_length=0.5, fc='b', ec='b')
+    
+    # Draw cell boundaries
+    for cell in cells_list:
+        x_floor, x_ceil = cell[0], cell[1]
+        y_floor, y_ceil = cell[2], cell[3]
+        
+        # Draw vertical lines for x boundaries
+        if x_floor is not False and x_floor is not None:
+            if y_floor is None:
+                y_bottom = -10
+            else:
+                y_bottom = project.project(Point3D(x_floor, 0, 0), y_floor, 'y').y
+            if y_ceil is None:
+                y_top = 10
+            else:
+                y_top = project.project(Point3D(x_floor, 0, 0), y_ceil, 'y').y
+
+            plt.vlines(x=float(x_floor + 0.1), ymin=y_bottom, ymax=y_top, color='r', linestyle='--', alpha=0.5)
+            
+        if x_ceil is not False and x_ceil is not None:
+            if y_floor is None:
+                y_bottom = -10
+            else:
+                y_bottom = project.project(Point3D(x_ceil, 0, 0), y_floor, 'y').y
+            if y_ceil is None:
+                y_top = 10
+            else:
+                y_top = project.project(Point3D(x_ceil, 0, 0), y_ceil, 'y').y
+
+            plt.vlines(x=float(x_ceil - 0.1), ymin=y_bottom, ymax=y_top, color='r', linestyle='--', alpha=0.5)
+
+        # Draw horizontal lines for y boundaries
+        if y_floor is not False and y_floor is not None:
+            # For Line3D, get y coordinate at x_floor and x_ceil
+            if isinstance(y_floor, Line3D):
+                plt.plot([float(y_floor.p1.x), float(y_floor.p2.x)], 
+                        [float(y_floor.p1.y + 0.1), float(y_floor.p2.y + 0.1)], 'r--', alpha=0.5)
+                
+        if y_ceil is not False and y_ceil is not None:
+            # For Line3D, get y coordinate at x_floor and x_ceil
+            if isinstance(y_ceil, Line3D):
+                plt.plot([float(y_ceil.p1.x), float(y_ceil.p2.x)], 
+                        [float(y_ceil.p1.y - 0.1), float(y_ceil.p2.y - 0.1)], 'r--', alpha=0.5)
+
+    # Plot points_above with small vertical offset
+    for s in segs:
+        if s in points_above:
+            for p in points_above[s]:
+                offset_point = p + Point3D(0, 0.1, 0)
+                plt.plot(float(offset_point.x), float(offset_point.y), 'go', markersize=5)  # green dots for points_above
+
+        if s in points_below:
+            for p in points_below[s]:
+                offset_point = p - Point3D(0, 0.1, 0)
+                plt.plot(float(offset_point.x), float(offset_point.y), 'ro', markersize=5)  # green dots for points_above
+
+    plt.grid(True)
+    plt.axis('equal')
+    plt.show()
+
 
 
 def test_vd():
@@ -493,7 +611,7 @@ def test_vd():
 
     # Create XY plane at z=0
     planes = []
-    while len(planes) < 3:
+    while len(planes) < 4:
         p1 = Point3D(random.uniform(-10,10), random.uniform(-10,10), random.uniform(-10,10))
         p2 = Point3D(random.uniform(-10,10), random.uniform(-10,10), random.uniform(-10,10))
         p3 = Point3D(random.uniform(-10,10), random.uniform(-10,10), random.uniform(-10,10))
@@ -522,4 +640,5 @@ def test_vd():
 if __name__ == "__main__":
     random.seed(30)
     # test_vd2d()
+    # test_vd2d_slanted()
     test_vd()
