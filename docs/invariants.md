@@ -3,8 +3,8 @@
 Copied from [design.md](../design.md) §21. A box is checked only when code
 enforces that invariant (a test or an explicit `verify_*` call).
 
-Phase 0 does not yet implement geometry, arrangements, or the sweep. The only
-enforced discipline is exact arithmetic and the module boundary.
+Phase 1 implements the geometry kernel. Arrangement, VD, and sweep
+invariants are still unchecked.
 
 ## Phase 0 discipline
 
@@ -16,9 +16,9 @@ enforced discipline is exact arithmetic and the module boundary.
 
 ## Geometry invariants
 
-- [ ] `INTERSECT_PLANES(P, Q)`: the returned line lies on both planes
-- [ ] `INTERSECT_THREE_PLANES(P, Q, R)`: the returned point lies on all three planes
-- [ ] `SLICE_PLANE_AT_Z(P, z)`: every returned 2D point lifts to a 3D point on `P`
+- [x] `INTERSECT_PLANES(P, Q)`: the returned line lies on both planes (`line_lies_on_both_planes`, `tests/unit/test_geometry.py`)
+- [x] `INTERSECT_THREE_PLANES(P, Q, R)`: the returned point lies on all three planes (`point_lies_on_planes`)
+- [x] `SLICE_PLANE_AT_Z(P, z)`: every returned 2D point lifts to a 3D point on `P` (`slice_lifts_to_plane`)
 
 ## Arrangement invariants
 
