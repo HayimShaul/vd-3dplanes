@@ -8,11 +8,12 @@ start the next phase until the current one has passed its human gate.
 
 ## Status
 
-**Phase 2 — 2D line arrangement.** Unbounded lines, DCEL faces, no bounding
-box in the combinatorics. Exact `Fraction` arithmetic.
+**Phase 3 — 2D vertical decomposition.** Trapezoids with y-parallel walls
+(`x = const`) on an unbounded line arrangement. Exact `Fraction` arithmetic.
 
-Phase 0 (scaffold) and Phase 1 (geometry kernel) are in place. Do not start
-Phase 3 until you have checked the Phase 2 gallery against the captions.
+Phase 0 (scaffold), Phase 1 (geometry kernel), and Phase 2 (2D arrangement)
+are in place. Do not start Phase 4 until you have checked the Phase 3 gallery
+against the captions.
 
 ## Install
 
@@ -38,27 +39,32 @@ Do not start the next step if a figure and its caption disagree.
 Commands for the current phase:
 
 ```bash
-# Phase 2
-pytest tests/unit/test_arrangement2d.py tests/visual/test_arrangement2d_visual.py
-python -m vd3d.viz.gallery --step 2
+# Phase 3
+pytest tests/unit/test_vertical_decomposition.py tests/visual/test_vd2d_visual.py
+python -m vd3d.viz.gallery --step 3
 ```
 
-Open `artifacts/visual/index.html`. Confirm: intersection marks sit on both
-lines; piece counts match the titles (1 vertex / 4 rays; 3 vertices / 6 rays
-+ 3 segments); outgoing half-edge numbers increase counterclockwise from +x;
-the triangle arrangement is one bounded triangle plus six unbounded cells
-labeled `U`; the random `n=6` picture has no leftover slivers.
+Open `artifacts/visual/index.html`. Confirm: cyan ±y rays from vertices either
+hit the first obstacle (red mark) or reach the window edge, and never cross a
+line without a hit; dashed red walls are strictly vertical; the two-line
+picture has 6 trapezoids; the triangle picture has 9 cells (bounded triangle
+plus split outer cells) with walls at `x=0` and `x=1`; random pictures have
+no leftover slivers.
 
 Optional GUI (cycle scenes with left/right; `g` resamples; `q` quits):
 
 ```bash
-python -m vd3d.viz.viewer --phase 2
-python -m vd3d.viz.viewer --phase 2 --seed 42
+python -m vd3d.viz.viewer --phase 3
+python -m vd3d.viz.viewer --phase 3 --seed 42
 ```
 
 Earlier phases:
 
 ```bash
+# Phase 2
+pytest tests/unit/test_arrangement2d.py tests/visual/test_arrangement2d_visual.py
+python -m vd3d.viz.gallery --step 2
+
 # Phase 1 (rotate the 3D scenes)
 pytest tests/unit/test_geometry.py tests/unit/test_scenes.py
 python -m vd3d.viz.viewer --phase 1
@@ -81,6 +87,7 @@ python -m vd3d.viz.gallery --step N
 - [docs/conventions.md](docs/conventions.md) — axes, "vertical", exact arithmetic, general position
 - [docs/geometry.md](docs/geometry.md) — plane equation, orientation, intersections, slices
 - [docs/arrangement2d.md](docs/arrangement2d.md) — DCEL, CCW order, Euler characteristic
+- [docs/vertical_decomposition.md](docs/vertical_decomposition.md) — y-parallel walls, trapezoid cells
 - [docs/invariants.md](docs/invariants.md) — checklist from the design; boxes are checked only when code enforces them
 
 ## Layout

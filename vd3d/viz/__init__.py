@@ -11,6 +11,11 @@ Human review of 2D arrangements::
 
     python -m vd3d.viz.viewer --phase 2
     python -m vd3d.viz.gallery --step 2
+
+Human review of 2D vertical decompositions::
+
+    python -m vd3d.viz.viewer --phase 3
+    python -m vd3d.viz.gallery --step 3
 """
 
 from vd3d.viz.convert import to_float

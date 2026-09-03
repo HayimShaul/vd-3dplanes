@@ -4,8 +4,8 @@ Copied from [design.md](../design.md) §21. A box is checked only when code
 enforces that invariant (a test or an explicit `verify_*` call).
 
 Phase 1 implements the geometry kernel. Phase 2 implements the 2D line
-arrangement. Vertical-decomposition and sweep invariants are still
-unchecked.
+arrangement. Phase 3 implements the 2D vertical decomposition. Sweep
+invariants are still unchecked.
 
 ## Phase 0 discipline
 
@@ -30,11 +30,11 @@ unchecked.
 
 ## Vertical decomposition invariants
 
-- [ ] Every decomposition cell has a valid boundary
-- [ ] Every vertical wall belongs to the underlying arrangement / decomposition
-- [ ] No two decomposition cells overlap in their interiors
-- [ ] The union of decomposition cells equals the underlying arrangement domain
-- [ ] `number_of_vertical_walls(cell) <= 4`
+- [x] Every decomposition cell has a valid boundary (`cell_has_valid_boundary`, `tests/unit/test_vertical_decomposition.py`)
+- [x] Every vertical wall belongs to the underlying arrangement / decomposition (`wall_belongs_to_decomposition`)
+- [x] No two decomposition cells overlap in their interiors (`interiors_disjoint_at_representatives`; grid oracle in `tests/oracles/vd2d.py`)
+- [x] The union of decomposition cells equals the underlying arrangement domain (`assert_grid_partition`, `face_representatives_covered`)
+- [x] `number_of_vertical_walls(cell) <= 4` (`vertical_walls_at_most_four`)
 
 ## Sweep invariants
 

@@ -1,10 +1,9 @@
-"""Interactive review window for 3D geometry scenes.
-
-Phase 1 draws random planes, lines, and points. Pass ``--seed`` to replay
-a run; with no seed the current time is used and printed::
+"""Interactive review window for geometry, arrangement, and VD scenes.
 
     python -m vd3d.viz.viewer --phase 1
-    python -m vd3d.viz.viewer --phase 1 --seed 42
+    python -m vd3d.viz.viewer --phase 2
+    python -m vd3d.viz.viewer --phase 3
+    python -m vd3d.viz.viewer --phase 3 --seed 42
 
 Keys: left/right or n/p = next/previous scene, g = new random seed,
 r = reset camera, q = quit. Drag a 3D view to rotate it.
@@ -122,7 +121,7 @@ def show_phase(phase: int, *, scene: str | None = None, seed: int | None = None)
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Review geometry and arrangement scenes")
-    parser.add_argument("--phase", type=int, default=1, help="phase number (1 or 2)")
+    parser.add_argument("--phase", type=int, default=1, help="phase number (1, 2, or 3)")
     parser.add_argument("--scene", type=str, default=None, help="start at this scene name")
     parser.add_argument(
         "--seed",
