@@ -1,0 +1,3 @@
+"""Vertical decomposition of planes in 3D."""
+
+__version__ = "0.1.0"
