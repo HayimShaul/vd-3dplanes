@@ -3,9 +3,6 @@
 from __future__ import annotations
 
 import random
-from collections.abc import Callable
-from dataclasses import dataclass
-
 from matplotlib.figure import Figure
 
 from vd3d.geometry import (
@@ -38,15 +35,7 @@ from vd3d.viz.random_geom import (
     random_triple_planes,
     view_lim,
 )
-
-
-@dataclass(frozen=True)
-class Scene:
-    name: str
-    title: str
-    caption: str
-    figsize: tuple[float, float]
-    draw: Callable[[Figure], None]
+from vd3d.viz.scene import Scene
 
 
 def _draw_plane_eval_signs_fixed(fig: Figure) -> None:
@@ -400,8 +389,14 @@ def make_phase1_scenes(seed: int) -> tuple[Scene, ...]:
 
 
 def scenes_for_phase(phase: int, *, seed: int | None = None, fixtures: bool = False) -> tuple[Scene, ...]:
-    if phase != 1:
-        raise ValueError(f"no interactive scenes registered for phase {phase}")
-    if fixtures:
-        return PHASE1_SCENES
-    return make_phase1_scenes(choose_seed(seed))
+    if phase == 1:
+        if fixtures:
+            return PHASE1_SCENES
+        return make_phase1_scenes(choose_seed(seed))
+    if phase == 2:
+        from vd3d.viz.scenes_arrangement import PHASE2_SCENES, make_phase2_scenes
+
+        if fixtures:
+            return PHASE2_SCENES
+        return make_phase2_scenes(choose_seed(seed))
+    raise ValueError(f"no interactive scenes registered for phase {phase}")

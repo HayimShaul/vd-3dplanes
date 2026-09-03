@@ -1,1 +1,1 @@
-"""Brute-force oracles. Empty until a later phase needs one."""
+"""Brute-force oracles. Allowed to be slow and stupid."""

@@ -8,11 +8,11 @@ start the next phase until the current one has passed its human gate.
 
 ## Status
 
-**Phase 1 — geometry kernel.** Points, planes, plane–plane and three-plane
-intersection, and horizontal slices. Exact `Fraction` arithmetic.
+**Phase 2 — 2D line arrangement.** Unbounded lines, DCEL faces, no bounding
+box in the combinatorics. Exact `Fraction` arithmetic.
 
-Phase 0 (scaffold) is in place. Do not start Phase 2 until you have rotated
-the Phase 1 scenes in the GUI and they match the on-screen captions.
+Phase 0 (scaffold) and Phase 1 (geometry kernel) are in place. Do not start
+Phase 3 until you have checked the Phase 2 gallery against the captions.
 
 ## Install
 
@@ -26,36 +26,44 @@ Requires Python 3.11+. The virtual environment is gitignored.
 
 ## How to review a step
 
-Every step ships three things: unit tests, inspectable 3D scenes, and docs.
+Every step ships three things: unit tests, inspectable figures, and docs.
 A step is done only when all three hold:
 
 1. That step's unit tests are green.
-2. You open the review GUI, rotate the 3D views, and they match the captions.
+2. You open the review surface and the figures match the captions.
 3. The docs for that step list the invariants that are actually checked.
 
-Do not start the next step if a scene and its caption disagree.
+Do not start the next step if a figure and its caption disagree.
 
 Commands for the current phase:
 
 ```bash
-# Phase 1
+# Phase 2
+pytest tests/unit/test_arrangement2d.py tests/visual/test_arrangement2d_visual.py
+python -m vd3d.viz.gallery --step 2
+```
+
+Open `artifacts/visual/index.html`. Confirm: intersection marks sit on both
+lines; piece counts match the titles (1 vertex / 4 rays; 3 vertices / 6 rays
++ 3 segments); outgoing half-edge numbers increase counterclockwise from +x;
+the triangle arrangement is one bounded triangle plus six unbounded cells
+labeled `U`; the random `n=6` picture has no leftover slivers.
+
+Optional GUI (cycle scenes with left/right; `g` resamples; `q` quits):
+
+```bash
+python -m vd3d.viz.viewer --phase 2
+python -m vd3d.viz.viewer --phase 2 --seed 42
+```
+
+Earlier phases:
+
+```bash
+# Phase 1 (rotate the 3D scenes)
 pytest tests/unit/test_geometry.py tests/unit/test_scenes.py
 python -m vd3d.viz.viewer --phase 1
 python -m vd3d.viz.viewer --phase 1 --seed 42
-```
 
-A window opens on random planes, lines, and points. With no ``--seed`` the
-current time is the seed (printed as `seed=...`). Pass that value to replay
-the same geometry.
-
-Drag the 3D axes to rotate. Left/right (or `n`/`p`) cycles the five scenes;
-`g` draws a new random seed; `q` quits.
-
-Confirm by rotating: a point on/above/below a plane; two planes and their
-intersection line; two parallel planes with no line; three planes meeting
-at one point; and a horizontal slice whose 3D trace stays in the plane.
-
-```bash
 # Phase 0 (gallery pipeline)
 pytest tests/unit/test_scalar.py tests/unit/test_linalg.py tests/unit/test_architecture.py tests/visual/test_gallery_smoke.py
 python -m vd3d.viz.gallery --step 0
@@ -65,13 +73,14 @@ Later phases use the same pattern:
 
 ```bash
 pytest tests/unit/test_<module>.py
-python -m vd3d.viz.viewer --phase N
+python -m vd3d.viz.gallery --step N
 ```
 
 ## Conventions and invariants
 
 - [docs/conventions.md](docs/conventions.md) — axes, "vertical", exact arithmetic, general position
 - [docs/geometry.md](docs/geometry.md) — plane equation, orientation, intersections, slices
+- [docs/arrangement2d.md](docs/arrangement2d.md) — DCEL, CCW order, Euler characteristic
 - [docs/invariants.md](docs/invariants.md) — checklist from the design; boxes are checked only when code enforces them
 
 ## Layout
@@ -81,6 +90,6 @@ vd3d/                 library (kernel packages must not import viz)
 docs/                 human-readable notes, one concern per file
 tests/unit/           exact, non-graphical tests
 tests/visual/         write PNG + caption under artifacts/visual/
-tests/oracles/        slow brute-force checkers (later phases)
+tests/oracles/        slow brute-force checkers
 artifacts/visual/     generated review gallery (gitignored)
 ```

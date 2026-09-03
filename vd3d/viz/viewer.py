@@ -18,7 +18,8 @@ import sys
 import matplotlib.pyplot as plt
 
 from vd3d.viz.random_geom import choose_seed
-from vd3d.viz.scenes import Scene, scenes_for_phase
+from vd3d.viz.scene import Scene
+from vd3d.viz.scenes import scenes_for_phase
 
 _HELP = "drag 3D to rotate   ←/→ or n/p change scene   g new seed   r reset view   q quit"
 
@@ -120,8 +121,8 @@ def show_phase(phase: int, *, scene: str | None = None, seed: int | None = None)
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Rotate Phase 1 geometry scenes")
-    parser.add_argument("--phase", type=int, default=1, help="phase number (default: 1)")
+    parser = argparse.ArgumentParser(description="Review geometry and arrangement scenes")
+    parser.add_argument("--phase", type=int, default=1, help="phase number (1 or 2)")
     parser.add_argument("--scene", type=str, default=None, help="start at this scene name")
     parser.add_argument(
         "--seed",

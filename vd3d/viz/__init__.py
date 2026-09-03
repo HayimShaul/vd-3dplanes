@@ -6,6 +6,11 @@ Kernel packages must not import this package. Convert ``Scalar`` to
 Human review of 3D scenes::
 
     python -m vd3d.viz.viewer --phase 1
+
+Human review of 2D arrangements::
+
+    python -m vd3d.viz.viewer --phase 2
+    python -m vd3d.viz.gallery --step 2
 """
 
 from vd3d.viz.convert import to_float

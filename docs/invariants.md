@@ -3,8 +3,9 @@
 Copied from [design.md](../design.md) §21. A box is checked only when code
 enforces that invariant (a test or an explicit `verify_*` call).
 
-Phase 1 implements the geometry kernel. Arrangement, VD, and sweep
-invariants are still unchecked.
+Phase 1 implements the geometry kernel. Phase 2 implements the 2D line
+arrangement. Vertical-decomposition and sweep invariants are still
+unchecked.
 
 ## Phase 0 discipline
 
@@ -22,10 +23,10 @@ invariants are still unchecked.
 
 ## Arrangement invariants
 
-- [ ] Every arrangement vertex lies on all of its incident edges
-- [ ] Every edge lies on its supporting line
-- [ ] `twin(twin(e)) == e`
-- [ ] Every face has a valid boundary cycle
+- [x] Every arrangement vertex lies on all of its incident edges (`vertex_lies_on_incident_edges`, `tests/unit/test_arrangement2d.py`)
+- [x] Every edge lies on its supporting line (`edge_lies_on_supporting_line`)
+- [x] `twin(twin(e)) == e` (`twin_involution`)
+- [x] Every face has a valid boundary cycle (`face_cycles_valid`; Euler `V - E + F = 1` for the plane; each `representative_point` lies in exactly one face)
 
 ## Vertical decomposition invariants
 
