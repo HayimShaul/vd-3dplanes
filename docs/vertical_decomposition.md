@@ -4,7 +4,7 @@ Phase 3. Input is an `Arrangement2D`. Output is a trapezoidal map whose
 walls are parallel to the **y-axis** (`x = const`). Exact `Fraction`
 coefficients. See [conventions.md](conventions.md).
 
-2D packages must not import `vd3d.sweep` or `vd3d.cells3d`.
+2D packages must not import `vd3d.events`, `vd3d.sweep`, or `vd3d.cells3d`.
 
 ## API
 
@@ -78,7 +78,7 @@ Open `artifacts/visual/index.html`. Optional GUI:
 
 ```bash
 python -m vd3d.viz.viewer --phase 3
-python -m vd3d.viz.viewer --phase 3 --seed 42
+python -m vd3d.viz.viewer --phase 3 --seed 42 --n 6
 ```
 
 ## Checked invariants

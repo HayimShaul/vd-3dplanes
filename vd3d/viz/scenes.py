@@ -376,9 +376,14 @@ def _scene_slice(rng: random.Random, seed: int) -> Scene:
     )
 
 
-def make_phase1_scenes(seed: int) -> tuple[Scene, ...]:
-    """Five Phase 1 scenes from ``seed``. Same seed → same geometry."""
+def make_phase1_scenes(seed: int, n: int | None = None) -> tuple[Scene, ...]:
+    """Five Phase 1 scenes from ``seed``. Same seed → same geometry.
+
+    ``n`` is accepted for the viewer API. Phase 1 scenes have a fixed number
+    of planes (1, 2, or 3), so ``n`` does not change them.
+    """
     rng = random.Random(seed)
+    _ = n
     return (
         _scene_eval_signs(rng, seed),
         _scene_intersecting(rng, seed),
@@ -388,21 +393,51 @@ def make_phase1_scenes(seed: int) -> tuple[Scene, ...]:
     )
 
 
-def scenes_for_phase(phase: int, *, seed: int | None = None, fixtures: bool = False) -> tuple[Scene, ...]:
+def scenes_for_phase(
+    phase: int,
+    *,
+    seed: int | None = None,
+    fixtures: bool = False,
+    n: int | None = None,
+) -> tuple[Scene, ...]:
     if phase == 1:
         if fixtures:
             return PHASE1_SCENES
-        return make_phase1_scenes(choose_seed(seed))
+        return make_phase1_scenes(choose_seed(seed), n=n)
     if phase == 2:
         from vd3d.viz.scenes_arrangement import PHASE2_SCENES, make_phase2_scenes
 
         if fixtures:
             return PHASE2_SCENES
-        return make_phase2_scenes(choose_seed(seed))
+        return make_phase2_scenes(choose_seed(seed), n=n)
     if phase == 3:
         from vd3d.viz.scenes_vd import PHASE3_SCENES, make_phase3_scenes
 
         if fixtures:
             return PHASE3_SCENES
-        return make_phase3_scenes(choose_seed(seed))
+        return make_phase3_scenes(choose_seed(seed), n=n)
+    if phase == 4:
+        from vd3d.viz.scenes_zone import PHASE4_SCENES, make_phase4_scenes
+
+        if fixtures:
+            return PHASE4_SCENES
+        return make_phase4_scenes(choose_seed(seed), n=n)
+    if phase == 5:
+        from vd3d.viz.scenes_events import PHASE5_SCENES, make_phase5_scenes
+
+        if fixtures:
+            return PHASE5_SCENES
+        return make_phase5_scenes(choose_seed(seed), n=n)
+    if phase == 6:
+        from vd3d.viz.scenes_alignment import PHASE6_SCENES, make_phase6_scenes
+
+        if fixtures:
+            return PHASE6_SCENES
+        return make_phase6_scenes(choose_seed(seed), n=n)
+    if phase == 7:
+        from vd3d.viz.scenes_event_list import PHASE7_SCENES, make_phase7_scenes
+
+        if fixtures:
+            return PHASE7_SCENES
+        return make_phase7_scenes(choose_seed(seed), n=n)
     raise ValueError(f"no interactive scenes registered for phase {phase}")

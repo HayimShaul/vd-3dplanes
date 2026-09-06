@@ -1,0 +1,52 @@
+"""Hand fixtures for events (design Tests 15–18) and the Phase 7 slice."""
+
+from __future__ import annotations
+
+from vd3d.geometry.plane import Plane
+
+
+def planes_through_123() -> list[Plane]:
+    """Three non-vertical planes meeting at ``(1, 2, 3)`` (design Test 15)."""
+    return [
+        Plane(id=1, a=1, b=0, c=1, d=-4),  # x + z = 4
+        Plane(id=2, a=0, b=1, c=1, d=-5),  # y + z = 5
+        Plane(id=3, a=1, b=1, c=1, d=-6),  # x + y + z = 6
+    ]
+
+
+def planes_parallel_family() -> list[Plane]:
+    """Three pairwise-parallel planes (design Test 16)."""
+    return [
+        Plane(id=1, a=1, b=1, c=1, d=0),
+        Plane(id=2, a=1, b=1, c=1, d=-1),
+        Plane(id=3, a=1, b=1, c=1, d=-2),
+    ]
+
+
+def planes_alignment_at_z2() -> list[Plane]:
+    """``L12`` (x=z, y=0) and ``L34`` (x=4-z, y=3) align at ``z=2``."""
+    return [
+        Plane(id=1, a=1, b=1, c=-1, d=0),
+        Plane(id=2, a=1, b=-1, c=-1, d=0),
+        Plane(id=3, a=1, b=1, c=1, d=-7),
+        Plane(id=4, a=1, b=-1, c=1, d=-1),
+    ]
+
+
+def planes_never_align() -> list[Plane]:
+    """Parallel walls ``x = z`` and ``x = z + 1``."""
+    return [
+        Plane(id=1, a=1, b=1, c=-1, d=0),
+        Plane(id=2, a=1, b=-1, c=-1, d=0),
+        Plane(id=3, a=1, b=1, c=-1, d=-4),
+        Plane(id=4, a=1, b=-1, c=-1, d=2),
+    ]
+
+
+def planes_alignment_blocked() -> list[Plane]:
+    """Test 17 plus a third vertex on the open segment at ``z = 2``."""
+    return [
+        *planes_alignment_at_z2(),
+        Plane(id=5, a=0, b=2, c=1, d=-5),
+        Plane(id=6, a=1, b=1, c=-1, d="-3/2"),
+    ]

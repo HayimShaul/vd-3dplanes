@@ -12,7 +12,8 @@ build_line_arrangement(lines) -> Arrangement2D
 ```
 
 `Arrangement2D` is a DCEL: vertices, undirected edge pieces, half-edges,
-faces. 2D packages must not import `vd3d.sweep` or `vd3d.cells3d`.
+faces. 2D packages must not import `vd3d.events`, `vd3d.sweep`, or
+`vd3d.cells3d`.
 
 ## Line–line intersection
 
@@ -95,7 +96,7 @@ to resample):
 
 ```bash
 python -m vd3d.viz.viewer --phase 2
-python -m vd3d.viz.viewer --phase 2 --seed 42
+python -m vd3d.viz.viewer --phase 2 --seed 42 --n 6
 ```
 
 ## Checked invariants

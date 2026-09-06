@@ -4,8 +4,11 @@ Copied from [design.md](../design.md) §21. A box is checked only when code
 enforces that invariant (a test or an explicit `verify_*` call).
 
 Phase 1 implements the geometry kernel. Phase 2 implements the 2D line
-arrangement. Phase 3 implements the 2D vertical decomposition. Sweep
-invariants are still unchecked.
+arrangement. Phase 3 implements the 2D vertical decomposition. Phase 4
+implements the zone of a query line. Phase 5 implements pairwise
+intersection lines and triple events. Phase 6 implements vertical
+alignment events. Phase 7 implements the combined event list and the
+2D VD of a slice at a given `z`. Sweep invariants are still unchecked.
 
 ## Phase 0 discipline
 
@@ -35,6 +38,35 @@ invariants are still unchecked.
 - [x] No two decomposition cells overlap in their interiors (`interiors_disjoint_at_representatives`; grid oracle in `tests/oracles/vd2d.py`)
 - [x] The union of decomposition cells equals the underlying arrangement domain (`assert_grid_partition`, `face_representatives_covered`)
 - [x] `number_of_vertical_walls(cell) <= 4` (`vertical_walls_at_most_four`)
+
+## Zone invariants
+
+- [x] Crossings of `L` are sorted by the 1D parameter along `L` (`crossings_sorted`, `tests/unit/test_zone.py`)
+- [x] Each crossing lies on `L` and on the recorded arrangement edge (`crossings_lie_on_query_and_edge`)
+- [x] Consecutive zone faces are the two sides of the recorded edge (`zone_faces_match_crossings`)
+- [x] The zone face sequence matches independent midpoint location on `L` (`tests/oracles/zone.py`)
+- [x] Supporting-line opposite vertices are vertices of incident faces and do not lie on `L` (`supporting_split_matches_line`)
+- [ ] Query through a vertex (deferred; `QueryThroughVertex`)
+- [ ] Query overlapping an arrangement edge (deferred; `QueryOverlapsArrangement`)
+
+## Event invariants
+
+- [x] `COMPUTE_INTERSECTION_LINES`: line count equals the number of non-parallel pairs (`verify_intersection_lines`, `tests/unit/test_events.py`)
+- [x] Each intersection line lies on both source planes (`each_line_lies_on_source_planes`)
+- [x] `n` planes with no parallel pair yield `n(n-1)/2` lines
+- [x] Test 15: planes through `(1, 2, 3)` emit exactly one triple event at `z = 3`
+- [x] Test 16: a parallel family emits zero triples
+- [x] Every triple event point lies on its three planes and `event.z == point.z` (`triple_event_point_on_planes`)
+- [x] Triple events are sorted by unique `(z, type, stable_id)` keys
+- [x] `BUILD_VERTICAL_WALL(L)` contains `L` and has no `y` term (`tests/unit/test_alignment.py`)
+- [x] Test 17: one visible alignment at `z = 2`; never-align and blocked-visibility cases
+- [x] Alignment events have the same `x`, distinct `y`, and `event.z` equal to both points' `z`
+- [x] Test 18: `generate_alignment_events` keys equal the pair-enumeration oracle (`tests/oracles/alignment.py`)
+- [x] `GENERATE_ALL_EVENTS` is triples ∪ alignments, deduped, sorted by unique `(z, type, stable_id)` (`verify_all_events`, `tests/unit/test_event_list.py`)
+- [x] Combined keys equal the union of the triple enumerator and the alignment oracle (`tests/oracles/event_list.py`)
+- [x] No two events share `z` on general-position fixtures (`events_have_unique_z`)
+- [x] `CHOOSE_Z_BELOW_ALL_EVENTS` is strictly below every event `z` (`z_strictly_below_all_events`)
+- [x] `COMPUTE_VD_AT_Z` just below / at / just above Test 15: 3 / 1 / 3 arrangement vertices (triangle vs concurrent)
 
 ## Sweep invariants
 

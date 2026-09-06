@@ -9,6 +9,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from vd3d.viz.scenes import PHASE1_SCENES, make_phase1_scenes
+from vd3d.viz.scenes_zone import make_phase4_scenes
 from vd3d.viz.viewer import ReviewViewer, main
 
 
@@ -41,6 +42,18 @@ def test_viewer_reroll_uses_new_seed(monkeypatch):
     plt.close(viewer.fig)
 
 
+def test_viewer_reroll_keeps_n(monkeypatch):
+    monkeypatch.setattr("vd3d.viz.viewer.choose_seed", lambda seed: 99 if seed is None else seed)
+    scenes = make_phase4_scenes(1, n=6)
+    viewer = ReviewViewer(scenes, start=0, phase=4, seed=1, n=6)
+    viewer._on_key(SimpleNamespace(key="g"))
+    assert viewer.seed == 99
+    assert viewer.n == 6
+    assert all("n=6" in scene.caption for scene in viewer.scenes)
+    plt.close(viewer.fig)
+
+
 def test_main_refuses_agg_backend():
     assert main(["--phase", "1"]) == 2
     assert main(["--phase", "1", "--seed", "1"]) == 2
+    assert main(["--phase", "4", "-n", "0"]) == 2

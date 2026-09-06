@@ -19,7 +19,7 @@ _TWOD_PACKAGES = (
     "zone",
 )
 _FORBIDDEN_IN_KERNEL = ("matplotlib", "vd3d.viz", "numpy")
-_FORBIDDEN_IN_2D = ("vd3d.sweep", "vd3d.cells3d")
+_FORBIDDEN_IN_2D = ("vd3d.events", "vd3d.sweep", "vd3d.cells3d")
 
 
 def _iter_python_files(package: str):
@@ -54,7 +54,7 @@ def test_kernel_packages_do_not_import_viz_or_matplotlib():
     assert offenders == []
 
 
-def test_2d_packages_do_not_import_sweep_or_cells3d():
+def test_2d_packages_do_not_import_events_sweep_or_cells3d():
     offenders = []
     for package in _TWOD_PACKAGES:
         for path in _iter_python_files(package):

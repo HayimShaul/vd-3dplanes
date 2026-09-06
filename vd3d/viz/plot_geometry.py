@@ -124,6 +124,40 @@ def draw_line2d(ax, line: Line2D, *, lim: float = 5.0, color: str = "black", lab
     ax.plot(xs, ys, color=color, linewidth=2, label=label)
 
 
+def draw_z_axis(
+    ax,
+    *,
+    lim: float,
+    tick_z: float | None = None,
+    tick_label: str | None = None,
+    color: str = "0.25",
+    tick_color: str = "black",
+) -> None:
+    """Draw the z-axis and an optional tick at a sweep height."""
+    ax.plot([0, 0], [0, 0], [-lim, lim], color=color, linewidth=1.4)
+    if tick_z is None:
+        return
+    half = 0.12 * lim
+    ax.plot([-half, half], [0, 0], [tick_z, tick_z], color=tick_color, linewidth=2.4)
+    ax.plot([0, 0], [-half, half], [tick_z, tick_z], color=tick_color, linewidth=2.4)
+    ax.scatter([0], [0], [tick_z], c=tick_color, s=35, depthshade=False)
+    label = tick_label if tick_label is not None else f"z={tick_z:g}"
+    ax.text(half * 1.4, half * 1.4, tick_z, label, color=tick_color, fontsize=10)
+
+
+def draw_height_guide(ax, point: Point3D, *, color: str = "0.35") -> None:
+    """Dashed segment from ``(0, 0, point.z)`` to ``point`` (same height)."""
+    z = to_float(point.z)
+    ax.plot(
+        [0.0, to_float(point.x)],
+        [0.0, to_float(point.y)],
+        [z, z],
+        color=color,
+        linestyle="--",
+        linewidth=1.2,
+    )
+
+
 def set_equal_3d(ax, lim: float = 3.0) -> None:
     ax.set_xlim(-lim, lim)
     ax.set_ylim(-lim, lim)

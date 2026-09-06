@@ -8,12 +8,14 @@ start the next phase until the current one has passed its human gate.
 
 ## Status
 
-**Phase 3 — 2D vertical decomposition.** Trapezoids with y-parallel walls
-(`x = const`) on an unbounded line arrangement. Exact `Fraction` arithmetic.
+**Phase 7 — event list and initial slice.** Triples and alignments are
+merged, deduplicated, and sorted by `(z, type, id)`. The 2D VD at any
+`z` is recomputed from the slice arrangement. Exact `Fraction`
+arithmetic.
 
-Phase 0 (scaffold), Phase 1 (geometry kernel), and Phase 2 (2D arrangement)
-are in place. Do not start Phase 4 until you have checked the Phase 3 gallery
-against the captions.
+Phases 0–6 are in place. Do not start Phase 8 until you have checked the
+Phase 7 figures against the captions (timeline colors and the local
+triangle flip).
 
 ## Install
 
@@ -39,28 +41,44 @@ Do not start the next step if a figure and its caption disagree.
 Commands for the current phase:
 
 ```bash
-# Phase 3
-pytest tests/unit/test_vertical_decomposition.py tests/visual/test_vd2d_visual.py
-python -m vd3d.viz.gallery --step 3
+# Phase 7
+pytest tests/unit/test_event_list.py tests/visual/test_event_list_visual.py
+python -m vd3d.viz.gallery --step 7
+python -m vd3d.viz.viewer --phase 7
+python -m vd3d.viz.viewer --phase 7 --seed 42 --n 4
 ```
 
-Open `artifacts/visual/index.html`. Confirm: cyan ±y rays from vertices either
-hit the first obstacle (red mark) or reach the window edge, and never cross a
-line without a hit; dashed red walls are strictly vertical; the two-line
-picture has 6 trapezoids; the triangle picture has 9 cells (bounded triangle
-plus split outer cells) with walls at `x=0` and `x=1`; random pictures have
-no leftover slivers.
+Confirm: the timeline is a 1D **z**-axis with **red triples** and **green
+alignments** in increasing `z`; the Test 15 before/after pair has a small
+triangle on each side that flips through `(1, 2)` and nothing else in the
+combinatorics changes.
 
-Optional GUI (cycle scenes with left/right; `g` resamples; `q` quits):
-
-```bash
-python -m vd3d.viz.viewer --phase 3
-python -m vd3d.viz.viewer --phase 3 --seed 42
-```
+`--n` sets the number of random planes (phases 1, 5–7) or lines (phases 2–4).
+Omit it and each random scene picks a small count. `g` resamples with a new
+seed and keeps `n`.
 
 Earlier phases:
 
 ```bash
+# Phase 6
+pytest tests/unit/test_alignment.py tests/visual/test_alignment_visual.py
+python -m vd3d.viz.gallery --step 6
+python -m vd3d.viz.viewer --phase 6
+
+# Phase 5
+pytest tests/unit/test_events.py tests/visual/test_events_visual.py
+python -m vd3d.viz.gallery --step 5
+python -m vd3d.viz.viewer --phase 5
+
+# Phase 4
+pytest tests/unit/test_zone.py tests/visual/test_zone_visual.py
+python -m vd3d.viz.gallery --step 4
+python -m vd3d.viz.viewer --phase 4
+
+# Phase 3
+pytest tests/unit/test_vertical_decomposition.py tests/visual/test_vd2d_visual.py
+python -m vd3d.viz.gallery --step 3
+
 # Phase 2
 pytest tests/unit/test_arrangement2d.py tests/visual/test_arrangement2d_visual.py
 python -m vd3d.viz.gallery --step 2
@@ -88,6 +106,10 @@ python -m vd3d.viz.gallery --step N
 - [docs/geometry.md](docs/geometry.md) — plane equation, orientation, intersections, slices
 - [docs/arrangement2d.md](docs/arrangement2d.md) — DCEL, CCW order, Euler characteristic
 - [docs/vertical_decomposition.md](docs/vertical_decomposition.md) — y-parallel walls, trapezoid cells
+- [docs/zone.md](docs/zone.md) — query-line zone, supporting-line opposite vertices
+- [docs/events.md](docs/events.md) — intersection lines, triple events, sort key
+- [docs/alignment.md](docs/alignment.md) — y-parallel walls, alignment oracle vs zone
+- [docs/event_list.md](docs/event_list.md) — combined events, initial z, VD at a slice
 - [docs/invariants.md](docs/invariants.md) — checklist from the design; boxes are checked only when code enforces them
 
 ## Layout

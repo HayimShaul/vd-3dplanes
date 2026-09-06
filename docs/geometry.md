@@ -70,6 +70,9 @@ python -m vd3d.viz.viewer --phase 1
 python -m vd3d.viz.viewer --phase 1 --seed 42
 ```
 
+`--n` is accepted (number of planes) but Phase 1 scenes have a fixed plane
+count, so it does not change them.
+
 The viewer samples random planes, lines, and points. With no `--seed` it uses
 `time.time_ns()` and prints `seed=...`. Re-run with that seed to get the same
 figures. `g` in the window draws a new seed.

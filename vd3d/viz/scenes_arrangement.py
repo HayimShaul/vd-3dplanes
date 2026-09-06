@@ -25,7 +25,7 @@ from vd3d.viz.plot_arrangement import (
     viewing_limit,
 )
 from vd3d.viz.plot_geometry import draw_line2d
-from vd3d.viz.random_geom import choose_seed
+from vd3d.viz.random_geom import choose_seed, resolve_n
 from vd3d.viz.scene import Scene
 
 
@@ -265,8 +265,8 @@ def _scene_intersect_random(rng: random.Random, seed: int) -> Scene:
     )
 
 
-def _scene_pieces_random(rng: random.Random, seed: int) -> Scene:
-    n = rng.choice([2, 3])
+def _scene_pieces_random(rng: random.Random, seed: int, n: int | None = None) -> Scene:
+    n = resolve_n(n, rng, (2, 3))
     lines = random_simple_lines(rng, n)
     arr = build_line_arrangement(lines)
     rays = sum(1 for e in arr.edges if e.kind == "ray")
@@ -279,7 +279,7 @@ def _scene_pieces_random(rng: random.Random, seed: int) -> Scene:
         name="pieces_random",
         title="Step 2.2: pieces",
         caption=(
-            f"seed={seed}. {len(arr.vertices)} vertices, {rays} rays (arrows), "
+            f"seed={seed} n={n}. {len(arr.vertices)} vertices, {rays} rays (arrows), "
             f"{segs} segments. Count the colored pieces; they must match the title."
         ),
         figsize=(7, 7),
@@ -308,8 +308,8 @@ def _scene_circulation_random(rng: random.Random, seed: int) -> Scene:
     )
 
 
-def _scene_faces_random(rng: random.Random, seed: int) -> Scene:
-    n = rng.choice([3, 4, 6])
+def _scene_faces_random(rng: random.Random, seed: int, n: int | None = None) -> Scene:
+    n = resolve_n(n, rng, (3, 4, 6))
     lines = random_simple_lines(rng, n)
     arr = build_line_arrangement(lines)
 
@@ -320,7 +320,7 @@ def _scene_faces_random(rng: random.Random, seed: int) -> Scene:
         name="faces_random",
         title="Step 2.4: faces",
         caption=(
-            f"seed={seed}. {len(arr.bounded_faces)} bounded + {len(arr.unbounded_faces)} "
+            f"seed={seed} n={n}. {len(arr.bounded_faces)} bounded + {len(arr.unbounded_faces)} "
             f"unbounded = {len(arr.faces)} faces. Every wedge filled, no leftover sliver."
         ),
         figsize=(8, 8),
@@ -328,17 +328,19 @@ def _scene_faces_random(rng: random.Random, seed: int) -> Scene:
     )
 
 
-def make_phase2_scenes(seed: int) -> tuple[Scene, ...]:
+def make_phase2_scenes(seed: int, n: int | None = None) -> tuple[Scene, ...]:
     rng = random.Random(seed)
     return (
         _scene_intersect_random(rng, seed),
-        _scene_pieces_random(rng, seed),
+        _scene_pieces_random(rng, seed, n=n),
         _scene_circulation_random(rng, seed),
-        _scene_faces_random(rng, seed),
+        _scene_faces_random(rng, seed, n=n),
     )
 
 
-def phase2_scenes(*, seed: int | None = None, fixtures: bool = False) -> tuple[Scene, ...]:
+def phase2_scenes(
+    *, seed: int | None = None, fixtures: bool = False, n: int | None = None
+) -> tuple[Scene, ...]:
     if fixtures:
         return PHASE2_SCENES
-    return make_phase2_scenes(choose_seed(seed))
+    return make_phase2_scenes(choose_seed(seed), n=n)

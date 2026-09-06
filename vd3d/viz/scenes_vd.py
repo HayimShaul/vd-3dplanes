@@ -26,7 +26,7 @@ from vd3d.viz.plot_vd import (
     draw_vertical_walls,
     vd_viewing_limit,
 )
-from vd3d.viz.random_geom import choose_seed
+from vd3d.viz.random_geom import choose_seed, resolve_n
 from vd3d.viz.scene import Scene
 
 
@@ -165,8 +165,8 @@ PHASE3_SCENES: tuple[Scene, ...] = (
 )
 
 
-def _scene_rays_random(rng: random.Random, seed: int) -> Scene:
-    n = rng.choice([2, 3])
+def _scene_rays_random(rng: random.Random, seed: int, n: int | None = None) -> Scene:
+    n = resolve_n(n, rng, (2, 3))
     lines = random_simple_lines(rng, n)
 
     def draw(fig: Figure) -> None:
@@ -176,7 +176,7 @@ def _scene_rays_random(rng: random.Random, seed: int) -> Scene:
         name="rays_random",
         title="Step 3.1: rays",
         caption=(
-            f"seed={seed}. Cyan ±y rays from every vertex. A red mark is the first "
+            f"seed={seed} n={n}. Cyan ±y rays from every vertex. A red mark is the first "
             "hit; otherwise the ray goes to the window edge. No ray may cross a "
             "black line without a hit."
         ),
@@ -185,8 +185,8 @@ def _scene_rays_random(rng: random.Random, seed: int) -> Scene:
     )
 
 
-def _scene_cells_random(rng: random.Random, seed: int) -> Scene:
-    n = rng.choice([3, 4, 5])
+def _scene_cells_random(rng: random.Random, seed: int, n: int | None = None) -> Scene:
+    n = resolve_n(n, rng, (3, 4, 5))
     lines = random_simple_lines(rng, n)
     arr = build_line_arrangement(lines)
     vd = compute_vertical_decomposition(arr)
@@ -198,7 +198,7 @@ def _scene_cells_random(rng: random.Random, seed: int) -> Scene:
         name="cells_random",
         title="Step 3.2: cells",
         caption=(
-            f"seed={seed}. {len(vd.cells)} cells, {len(vd.walls)} dashed vertical "
+            f"seed={seed} n={n}. {len(vd.cells)} cells, {len(vd.walls)} dashed vertical "
             "walls. Trapezoids, strictly vertical walls, no visible gap or overlap."
         ),
         figsize=(8, 8),
@@ -206,15 +206,17 @@ def _scene_cells_random(rng: random.Random, seed: int) -> Scene:
     )
 
 
-def make_phase3_scenes(seed: int) -> tuple[Scene, ...]:
+def make_phase3_scenes(seed: int, n: int | None = None) -> tuple[Scene, ...]:
     rng = random.Random(seed)
     return (
-        _scene_rays_random(rng, seed),
-        _scene_cells_random(rng, seed),
+        _scene_rays_random(rng, seed, n=n),
+        _scene_cells_random(rng, seed, n=n),
     )
 
 
-def phase3_scenes(*, seed: int | None = None, fixtures: bool = False) -> tuple[Scene, ...]:
+def phase3_scenes(
+    *, seed: int | None = None, fixtures: bool = False, n: int | None = None
+) -> tuple[Scene, ...]:
     if fixtures:
         return PHASE3_SCENES
-    return make_phase3_scenes(choose_seed(seed))
+    return make_phase3_scenes(choose_seed(seed), n=n)

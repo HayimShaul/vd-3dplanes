@@ -49,5 +49,5 @@ Assume, until a later robustness phase:
 ## Module boundary
 
 2D packages (`arrangement2d`, `vertical_decomposition`, `zone`) must not import
-`vd3d.sweep` or `vd3d.cells3d`. Kernel packages must not import `vd3d.viz` or
-`matplotlib`.
+`vd3d.events`, `vd3d.sweep`, or `vd3d.cells3d`. Kernel packages must not import
+`vd3d.viz` or `matplotlib`.

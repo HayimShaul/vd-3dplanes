@@ -1,9 +1,17 @@
-"""Interactive review window for geometry, arrangement, and VD scenes.
+"""Interactive review window for geometry, arrangement, VD, zone, and events.
 
     python -m vd3d.viz.viewer --phase 1
-    python -m vd3d.viz.viewer --phase 2
-    python -m vd3d.viz.viewer --phase 3
-    python -m vd3d.viz.viewer --phase 3 --seed 42
+    python -m vd3d.viz.viewer --phase 2 --n 6
+    python -m vd3d.viz.viewer --phase 3 --n 6
+    python -m vd3d.viz.viewer --phase 4 --n 8
+    python -m vd3d.viz.viewer --phase 5
+    python -m vd3d.viz.viewer --phase 6
+    python -m vd3d.viz.viewer --phase 6 --seed 42 --n 4
+    python -m vd3d.viz.viewer --phase 7
+    python -m vd3d.viz.viewer --phase 7 --seed 42 --n 4
+
+``--n`` is the number of lines (phases 2–4) or planes (phases 1, 5, 6, and 7).
+Omit it to let each random scene pick a small count.
 
 Keys: left/right or n/p = next/previous scene, g = new random seed,
 r = reset camera, q = quit. Drag a 3D view to rotate it.
@@ -31,11 +39,13 @@ class ReviewViewer:
         start: int = 0,
         phase: int | None = None,
         seed: int | None = None,
+        n: int | None = None,
     ) -> None:
         if not scenes:
             raise ValueError("no scenes to show")
         self.phase = phase
         self.seed = seed
+        self.n = n
         self.scenes = scenes
         self.index = start % len(scenes)
         self.fig = plt.figure(figsize=scenes[self.index].figsize)
@@ -44,9 +54,14 @@ class ReviewViewer:
         self._draw_current()
 
     def _seed_label(self) -> str:
-        if self.seed is None:
+        parts: list[str] = []
+        if self.seed is not None:
+            parts.append(f"seed={self.seed}")
+        if self.n is not None:
+            parts.append(f"n={self.n}")
+        if not parts:
             return ""
-        return f"  seed={self.seed}"
+        return "  " + " ".join(parts)
 
     def _draw_current(self) -> None:
         scene = self.scenes[self.index]
@@ -80,7 +95,9 @@ class ReviewViewer:
             return
         self.seed = choose_seed(None)
         print(f"seed={self.seed}", flush=True)
-        self.scenes = scenes_for_phase(self.phase, seed=self.seed)
+        if self.n is not None:
+            print(f"n={self.n}", flush=True)
+        self.scenes = scenes_for_phase(self.phase, seed=self.seed, n=self.n)
         self.index = 0
         self._draw_current()
 
@@ -103,10 +120,18 @@ class ReviewViewer:
         plt.show()
 
 
-def show_phase(phase: int, *, scene: str | None = None, seed: int | None = None) -> ReviewViewer:
+def show_phase(
+    phase: int,
+    *,
+    scene: str | None = None,
+    seed: int | None = None,
+    n: int | None = None,
+) -> ReviewViewer:
     resolved = choose_seed(seed)
     print(f"seed={resolved}", flush=True)
-    scenes = scenes_for_phase(phase, seed=resolved)
+    if n is not None:
+        print(f"n={n}", flush=True)
+    scenes = scenes_for_phase(phase, seed=resolved, n=n)
     start = 0
     if scene is not None:
         names = [item.name for item in scenes]
@@ -114,14 +139,14 @@ def show_phase(phase: int, *, scene: str | None = None, seed: int | None = None)
             start = names.index(scene)
         except ValueError as exc:
             raise SystemExit(f"unknown scene {scene!r}; choose from {names}") from exc
-    viewer = ReviewViewer(scenes, start=start, phase=phase, seed=resolved)
+    viewer = ReviewViewer(scenes, start=start, phase=phase, seed=resolved, n=n)
     viewer.show()
     return viewer
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Review geometry and arrangement scenes")
-    parser.add_argument("--phase", type=int, default=1, help="phase number (1, 2, or 3)")
+    parser.add_argument("--phase", type=int, default=1, help="phase number (1–7)")
     parser.add_argument("--scene", type=str, default=None, help="start at this scene name")
     parser.add_argument(
         "--seed",
@@ -129,7 +154,22 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="RNG seed (default: current time in nanoseconds)",
     )
+    parser.add_argument(
+        "-n",
+        "--n",
+        type=int,
+        default=None,
+        metavar="N",
+        dest="n",
+        help=(
+            "number of lines (phases 2–4) or planes (phases 1, 5, 6, and 7). "
+            "Default: each random scene picks a small count."
+        ),
+    )
     args = parser.parse_args(argv)
+    if args.n is not None and args.n < 1:
+        print("n must be a positive integer", file=sys.stderr)
+        return 2
     if not plt.isinteractive() and plt.get_backend().lower() == "agg":
         print(
             "matplotlib backend is Agg (no window). "
@@ -137,7 +177,7 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
         return 2
-    show_phase(args.phase, scene=args.scene, seed=args.seed)
+    show_phase(args.phase, scene=args.scene, seed=args.seed, n=args.n)
     return 0
 
 
