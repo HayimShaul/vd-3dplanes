@@ -76,7 +76,7 @@ def draw_point3d(
         [to_float(point.x)],
         [to_float(point.y)],
         [to_float(point.z)],
-        c=color,
+        color=color,
         s=size,
         edgecolors=edgecolor,
         depthshade=False,

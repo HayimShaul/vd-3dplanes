@@ -36,6 +36,11 @@ Human review of the combined event list and slice VD::
 
     python -m vd3d.viz.viewer --phase 7
     python -m vd3d.viz.gallery --step 7
+
+Human review of the reference sweep and 3D cells::
+
+    python -m vd3d.viz.viewer --phase 8
+    python -m vd3d.viz.gallery --step 8
 """
 
 from vd3d.viz.convert import to_float

@@ -8,7 +8,8 @@ arrangement. Phase 3 implements the 2D vertical decomposition. Phase 4
 implements the zone of a query line. Phase 5 implements pairwise
 intersection lines and triple events. Phase 6 implements vertical
 alignment events. Phase 7 implements the combined event list and the
-2D VD of a slice at a given `z`. Sweep invariants are still unchecked.
+2D VD of a slice at a given `z`. Phase 8 implements the reference
+`z`-sweep and 3D cells.
 
 ## Phase 0 discipline
 
@@ -70,12 +71,12 @@ alignment events. Phase 7 implements the combined event list and the
 
 ## Sweep invariants
 
-- [ ] At every open `z` interval, `CURRENT_VD` equals an independently computed VD at a sample `z`
-- [ ] `|active 3D cells| == |current 2D cells|`
+- [x] At every open `z` interval, `CURRENT_VD` equals an independently computed VD at a sample `z` (`assert_mid_interval_matches_recompute`, `tests/oracles/sweep.py`)
+- [x] `|active 3D cells| == |current 2D cells|` (`verify_active_against_vd`, `tests/unit/test_sweep.py`)
 
 ## 3D cell invariants
 
-- [ ] `cell.floor` is none or exactly one plane
-- [ ] `cell.ceiling` is none or exactly one plane
-- [ ] `len(cell.vertical_walls) <= 4`
-- [ ] For bounded cells, floor is below ceiling
+- [x] `cell.floor` is none or exactly one plane (`floor_at_most_one`, `verify_cell3d`)
+- [x] `cell.ceiling` is none or exactly one plane (`ceiling_at_most_one`)
+- [x] `len(cell.vertical_walls) <= 4` (`vertical_walls_at_most_four`)
+- [x] For bounded cells, `lower_z < upper_z` (`z_extent_ordered`; floor/ceiling are the y-supporting planes, z-extent is `lower_z`/`upper_z`)

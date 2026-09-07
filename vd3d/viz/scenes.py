@@ -440,4 +440,10 @@ def scenes_for_phase(
         if fixtures:
             return PHASE7_SCENES
         return make_phase7_scenes(choose_seed(seed), n=n)
+    if phase == 8:
+        from vd3d.viz.scenes_sweep import PHASE8_SCENES, make_phase8_scenes
+
+        if fixtures:
+            return PHASE8_SCENES
+        return make_phase8_scenes(choose_seed(seed), n=n)
     raise ValueError(f"no interactive scenes registered for phase {phase}")

@@ -57,3 +57,4 @@ def test_main_refuses_agg_backend():
     assert main(["--phase", "1"]) == 2
     assert main(["--phase", "1", "--seed", "1"]) == 2
     assert main(["--phase", "4", "-n", "0"]) == 2
+    assert main(["--phase", "8", "-n", "0"]) == 2

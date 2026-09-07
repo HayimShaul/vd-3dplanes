@@ -14,6 +14,7 @@ from vd3d.viz.scenes_zone import PHASE4_SCENES, make_phase4_scenes
 from vd3d.viz.scenes_events import PHASE5_SCENES, make_phase5_scenes
 from vd3d.viz.scenes_alignment import PHASE6_SCENES, make_phase6_scenes
 from vd3d.viz.scenes_event_list import PHASE7_SCENES, make_phase7_scenes
+from vd3d.viz.scenes_sweep import PHASE8_SCENES, make_phase8_scenes
 
 
 def test_phase1_fixtures_registered():
@@ -58,6 +59,12 @@ def test_phase7_fixtures_registered():
     assert len(scenes) == 2
 
 
+def test_phase8_fixtures_registered():
+    scenes = scenes_for_phase(8, fixtures=True)
+    assert [scene.name for scene in scenes] == [scene.name for scene in PHASE8_SCENES]
+    assert len(scenes) == 6
+
+
 def test_unknown_phase_rejected():
     try:
         scenes_for_phase(99, seed=1)
@@ -76,6 +83,7 @@ def test_each_fixture_scene_draws():
         *PHASE5_SCENES,
         *PHASE6_SCENES,
         *PHASE7_SCENES,
+        *PHASE8_SCENES,
     ):
         fig = plt.figure(figsize=scene.figsize)
         scene.draw(fig)
@@ -92,6 +100,7 @@ def test_random_scenes_draw():
         *make_phase5_scenes(1),
         *make_phase6_scenes(1),
         *make_phase7_scenes(1),
+        *make_phase8_scenes(1),
     ):
         fig = plt.figure(figsize=scene.figsize)
         scene.draw(fig)
@@ -123,6 +132,10 @@ def test_same_seed_is_reproducible():
     second7 = make_phase7_scenes(12345)
     assert [scene.caption for scene in first7] == [scene.caption for scene in second7]
     assert [scene.name for scene in first7] == [scene.name for scene in second7]
+    first8 = make_phase8_scenes(12345)
+    second8 = make_phase8_scenes(12345)
+    assert [scene.caption for scene in first8] == [scene.caption for scene in second8]
+    assert [scene.name for scene in first8] == [scene.name for scene in second8]
 
 
 def test_choose_seed_explicit():
@@ -148,6 +161,8 @@ def test_n_controls_line_count_phase2_to_4():
         assert "n=4" in scene.caption
     for scene in make_phase7_scenes(0, n=4):
         assert "n=4" in scene.caption
+    for scene in make_phase8_scenes(0, n=4):
+        assert "n=4" in scene.caption
     six = make_phase4_scenes(0, n=6)
     seven = make_phase4_scenes(0, n=7)
     assert [s.caption for s in six] != [s.caption for s in seven]
@@ -160,6 +175,9 @@ def test_n_controls_line_count_phase2_to_4():
     four7 = make_phase7_scenes(0, n=4)
     three7 = make_phase7_scenes(0, n=3)
     assert [s.caption for s in four7] != [s.caption for s in three7]
+    four8 = make_phase8_scenes(0, n=4)
+    three8 = make_phase8_scenes(0, n=3)
+    assert [s.caption for s in four8] != [s.caption for s in three8]
 
 
 def test_n_must_be_positive():
@@ -187,6 +205,12 @@ def test_n_must_be_positive():
         assert "positive" in str(exc)
     else:
         raise AssertionError("expected ValueError")
+    try:
+        make_phase8_scenes(0, n=0)
+    except ValueError as exc:
+        assert "positive" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
 
 
 def test_scenes_for_phase_forwards_n():
@@ -198,3 +222,5 @@ def test_scenes_for_phase_forwards_n():
     assert all("n=4" in scene.caption for scene in scenes6)
     scenes7 = scenes_for_phase(7, seed=1, n=4)
     assert all("n=4" in scene.caption for scene in scenes7)
+    scenes8 = scenes_for_phase(8, seed=1, n=4)
+    assert all("n=4" in scene.caption for scene in scenes8)

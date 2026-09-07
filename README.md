@@ -8,14 +8,13 @@ start the next phase until the current one has passed its human gate.
 
 ## Status
 
-**Phase 7 — event list and initial slice.** Triples and alignments are
-merged, deduplicated, and sorted by `(z, type, id)`. The 2D VD at any
-`z` is recomputed from the slice arrangement. Exact `Fraction`
+**Phase 8 — reference sweep and 3D cells.** Recompute the 2D VD at
+`z±ε`, match cells geometrically, and grow 3D prisms. Exact `Fraction`
 arithmetic.
 
-Phases 0–6 are in place. Do not start Phase 8 until you have checked the
-Phase 7 figures against the captions (timeline colors and the local
-triangle flip).
+Phases 0–7 are in place. Do not start Phase 9 until you have checked the
+Phase 8 figures against the captions (matched colours, black neighbourhood,
+query points in the right cell).
 
 ## Install
 
@@ -41,25 +40,29 @@ Do not start the next step if a figure and its caption disagree.
 Commands for the current phase:
 
 ```bash
-# Phase 7
-pytest tests/unit/test_event_list.py tests/visual/test_event_list_visual.py
-python -m vd3d.viz.gallery --step 7
-python -m vd3d.viz.viewer --phase 7
-python -m vd3d.viz.viewer --phase 7 --seed 42 --n 4
+# Phase 8
+pytest tests/unit/test_sweep.py tests/visual/test_sweep_visual.py
+python -m vd3d.viz.gallery --step 8
+python -m vd3d.viz.viewer --phase 8
+python -m vd3d.viz.viewer --phase 8 --seed 42 --n 4
 ```
 
-Confirm: the timeline is a 1D **z**-axis with **red triples** and **green
-alignments** in increasing `z`; the Test 15 before/after pair has a small
-triangle on each side that flips through `(1, 2)` and nothing else in the
-combinatorics changes.
+Confirm: matched cells share a colour and unmatched cells are **black**
+only near the event; one plane is two half-spaces with no vertical
+walls; query points sit in the 3D cell of their colour.
 
-`--n` sets the number of random planes (phases 1, 5–7) or lines (phases 2–4).
+`--n` sets the number of random planes (phases 1, 5–8) or lines (phases 2–4).
 Omit it and each random scene picks a small count. `g` resamples with a new
 seed and keeps `n`.
 
 Earlier phases:
 
 ```bash
+# Phase 7
+pytest tests/unit/test_event_list.py tests/visual/test_event_list_visual.py
+python -m vd3d.viz.gallery --step 7
+python -m vd3d.viz.viewer --phase 7
+
 # Phase 6
 pytest tests/unit/test_alignment.py tests/visual/test_alignment_visual.py
 python -m vd3d.viz.gallery --step 6
@@ -110,6 +113,7 @@ python -m vd3d.viz.gallery --step N
 - [docs/events.md](docs/events.md) — intersection lines, triple events, sort key
 - [docs/alignment.md](docs/alignment.md) — y-parallel walls, alignment oracle vs zone
 - [docs/event_list.md](docs/event_list.md) — combined events, initial z, VD at a slice
+- [docs/sweep.md](docs/sweep.md) — reference sweep, 3D cells, matching, oracles
 - [docs/invariants.md](docs/invariants.md) — checklist from the design; boxes are checked only when code enforces them
 
 ## Layout

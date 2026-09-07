@@ -1,8 +1,21 @@
-"""Hand fixtures for events (design Tests 15–18) and the Phase 7 slice."""
+"""Hand fixtures for events (design Tests 15–22) and the Phase 7–8 slices."""
 
 from __future__ import annotations
 
 from vd3d.geometry.plane import Plane
+
+
+def planes_one() -> list[Plane]:
+    """A single non-vertical plane (design Test 19). Slice is horizontal ``y = const``."""
+    return [Plane(id=1, a=0, b=1, c=1, d=0)]  # y + z = 0
+
+
+def planes_two() -> list[Plane]:
+    """Two intersecting non-vertical planes (design Test 20)."""
+    return [
+        Plane(id=1, a=1, b=0, c=1, d=-4),  # x + z = 4
+        Plane(id=2, a=0, b=1, c=1, d=-5),  # y + z = 5
+    ]
 
 
 def planes_through_123() -> list[Plane]:
