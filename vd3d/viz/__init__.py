@@ -41,6 +41,11 @@ Human review of the reference sweep and 3D cells::
 
     python -m vd3d.viz.viewer --phase 8
     python -m vd3d.viz.gallery --step 8
+
+Human review of incremental 2D updates::
+
+    python -m vd3d.viz.viewer --phase 9
+    python -m vd3d.viz.gallery --step 9
 """
 
 from vd3d.viz.convert import to_float

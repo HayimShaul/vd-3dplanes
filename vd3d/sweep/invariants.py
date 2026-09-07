@@ -36,10 +36,29 @@ def verify_active_against_vd(
             raise AssertionError(f"sweep invariant failed: {name}")
 
 
+def equivalent_vd(
+    incremental: VerticalDecomposition, reference: VerticalDecomposition
+) -> bool:
+    """True iff the two VDs have the same cell-signature multiset (design §12)."""
+    return (
+        same_combinatorics(incremental, reference)
+        and len(incremental.cells) == len(reference.cells)
+    )
+
+
 def verify_interval_matches_vd(
     vd: VerticalDecomposition, expected: VerticalDecomposition
 ) -> None:
     if not same_combinatorics(vd, expected):
         raise AssertionError(
             "sweep invariant failed: CURRENT_VD != independently computed VD"
+        )
+
+
+def verify_incremental_matches_recompute(
+    incremental: VerticalDecomposition, reference: VerticalDecomposition
+) -> None:
+    if not equivalent_vd(incremental, reference):
+        raise AssertionError(
+            "sweep invariant failed: incremental VD != compute_vd_at_z(z+)"
         )

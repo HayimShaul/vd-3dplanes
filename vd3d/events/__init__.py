@@ -4,6 +4,7 @@ Phase 5: intersection lines and triple events.
 Phase 6: y-parallel walls and vertical-alignment events.
 Phase 7: combined event list and the 2D VD at a given ``z``.
 Phase 8 lives in ``vd3d.sweep`` / ``vd3d.cells3d``.
+Phase 9 incremental 2D updates live in ``vd3d.sweep.update``.
 Must not import ``vd3d.viz``.
 """
 

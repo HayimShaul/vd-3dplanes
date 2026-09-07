@@ -8,13 +8,13 @@ start the next phase until the current one has passed its human gate.
 
 ## Status
 
-**Phase 8 — reference sweep and 3D cells.** Recompute the 2D VD at
-`z±ε`, match cells geometrically, and grow 3D prisms. Exact `Fraction`
-arithmetic.
+**Phase 9 — incremental 2D updates.** At every event the 2D VD is
+updated locally and checked against `compute_vd_at_z(z+)`. Exact
+`Fraction` arithmetic.
 
-Phases 0–7 are in place. Do not start Phase 9 until you have checked the
-Phase 8 figures against the captions (matched colours, black neighbourhood,
-query points in the right cell).
+Phases 0–8 are in place. Do not start Phase 10 until you have checked
+the Phase 9 figures against the captions (incremental vs oracle has no
+black cells; before/after matching colours agree far from the event).
 
 ## Install
 
@@ -40,24 +40,30 @@ Do not start the next step if a figure and its caption disagree.
 Commands for the current phase:
 
 ```bash
-# Phase 8
-pytest tests/unit/test_sweep.py tests/visual/test_sweep_visual.py
-python -m vd3d.viz.gallery --step 8
-python -m vd3d.viz.viewer --phase 8
-python -m vd3d.viz.viewer --phase 8 --seed 42 --n 4
+# Phase 9
+pytest tests/unit/test_incremental.py tests/visual/test_incremental_visual.py
+python -m vd3d.viz.gallery --step 9
+python -m vd3d.viz.viewer --phase 9
+python -m vd3d.viz.viewer --phase 9 --seed 42 --n 4
 ```
 
-Confirm: matched cells share a colour and unmatched cells are **black**
-only near the event; one plane is two half-spaces with no vertical
-walls; query points sit in the 3D cell of their colour.
+Confirm: the triple and alignment before/after pairs use the same
+matching colours as Phase 8 (matched share a colour, unmatched are
+**black** only near the event). The incremental-vs-oracle pair has
+**no black cells**.
 
-`--n` sets the number of random planes (phases 1, 5–8) or lines (phases 2–4).
+`--n` sets the number of random planes (phases 1, 5–9) or lines (phases 2–4).
 Omit it and each random scene picks a small count. `g` resamples with a new
 seed and keeps `n`.
 
 Earlier phases:
 
 ```bash
+# Phase 8
+pytest tests/unit/test_sweep.py tests/visual/test_sweep_visual.py
+python -m vd3d.viz.gallery --step 8
+python -m vd3d.viz.viewer --phase 8
+
 # Phase 7
 pytest tests/unit/test_event_list.py tests/visual/test_event_list_visual.py
 python -m vd3d.viz.gallery --step 7
@@ -114,6 +120,7 @@ python -m vd3d.viz.gallery --step N
 - [docs/alignment.md](docs/alignment.md) — y-parallel walls, alignment oracle vs zone
 - [docs/event_list.md](docs/event_list.md) — combined events, initial z, VD at a slice
 - [docs/sweep.md](docs/sweep.md) — reference sweep, 3D cells, matching, oracles
+- [docs/incremental.md](docs/incremental.md) — local 2D updates vs recompute oracle
 - [docs/invariants.md](docs/invariants.md) — checklist from the design; boxes are checked only when code enforces them
 
 ## Layout

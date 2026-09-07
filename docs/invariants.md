@@ -9,7 +9,8 @@ implements the zone of a query line. Phase 5 implements pairwise
 intersection lines and triple events. Phase 6 implements vertical
 alignment events. Phase 7 implements the combined event list and the
 2D VD of a slice at a given `z`. Phase 8 implements the reference
-`z`-sweep and 3D cells.
+`z`-sweep and 3D cells. Phase 9 implements incremental 2D updates
+checked against that recompute.
 
 ## Phase 0 discipline
 
@@ -73,6 +74,9 @@ alignment events. Phase 7 implements the combined event list and the
 
 - [x] At every open `z` interval, `CURRENT_VD` equals an independently computed VD at a sample `z` (`assert_mid_interval_matches_recompute`, `tests/oracles/sweep.py`)
 - [x] `|active 3D cells| == |current 2D cells|` (`verify_active_against_vd`, `tests/unit/test_sweep.py`)
+- [x] After every event, the incremental 2D VD equals `compute_vd_at_z(z+)` (`equivalent_vd`, `assert_equivalent_vd`, `tests/unit/test_incremental.py`)
+- [x] Incremental walls and trapezoid bounds match the recomputed slice (`wall_keys`, `cell_bound_keys`)
+- [x] Unmatched cells across a triple or alignment stay in the event neighbourhood
 
 ## 3D cell invariants
 

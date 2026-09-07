@@ -47,6 +47,13 @@ def collect_decomposition_walls(
         for ray in vertical_rays_from(vertex):
             hit = first_hit(arrangement, ray)
             insert_decomposition_segment(walls, vertex, ray, hit)
+    return finalize_decomposition_walls(arrangement, walls)
+
+
+def finalize_decomposition_walls(
+    arrangement: Arrangement2D, walls: list[VerticalWall]
+) -> list[VerticalWall]:
+    """Add vertical-input-line walls, sort, and assign dense ids."""
     _ensure_vertical_line_walls(arrangement, walls)
     walls.sort(key=_wall_sort_key)
     for i, wall in enumerate(walls):

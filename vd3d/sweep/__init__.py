@@ -1,7 +1,7 @@
 """z-sweep of the 2D vertical decomposition.
 
-Reference implementation: recompute the 2D VD at ``z±ε`` around every
-event (design §19). Incremental 2D updates are Phase 9.
+Reference implementation: incremental 2D updates at every event, checked
+against a recomputed ``z+`` slice (design §12, §19).
 
 Must not import ``vd3d.viz``. 2D packages must not import this package.
 """
@@ -18,7 +18,9 @@ from vd3d.sweep.around import (
 )
 from vd3d.sweep.invariants import (
     active_count_matches_2d,
+    equivalent_vd,
     verify_active_against_vd,
+    verify_incremental_matches_recompute,
     verify_interval_matches_vd,
 )
 from vd3d.sweep.locate import interval_containing, locate_cell3d
@@ -42,6 +44,14 @@ from vd3d.sweep.types import (
     SweepSnapshot,
     ZInterval,
 )
+from vd3d.sweep.update import (
+    event_vertex_plane_keys,
+    local_vertex_plane_keys,
+    update_2d_decomposition,
+    update_for_triple_intersection,
+    update_for_vertical_alignment,
+    vertex_plane_key,
+)
 
 __all__ = [
     "DEFAULT_EVENT_EPS",
@@ -55,10 +65,13 @@ __all__ = [
     "cell_near_event",
     "cell_signature",
     "compute_vd_around_event",
+    "equivalent_vd",
     "event_points_2d",
+    "event_vertex_plane_keys",
     "group_events_by_z",
     "interval_containing",
     "local_cell_ids",
+    "local_vertex_plane_keys",
     "locate_cell",
     "locate_cell3d",
     "match_cells",
@@ -67,8 +80,13 @@ __all__ = [
     "signatures_unique",
     "unmatched_after",
     "unmatched_before",
+    "update_2d_decomposition",
+    "update_for_triple_intersection",
+    "update_for_vertical_alignment",
     "verify_active_against_vd",
+    "verify_incremental_matches_recompute",
     "verify_interval_matches_vd",
+    "vertex_plane_key",
     "vertical_decomposition_3d",
     "write_snapshot_json",
     "z_before_after",

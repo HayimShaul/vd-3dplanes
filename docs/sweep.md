@@ -4,9 +4,10 @@ Phase 8. Input is a list of 3D planes. Output is a 3D vertical
 decomposition: prisms grown by sweeping the 2D VD along `z`. Exact
 `Fraction` coefficients. See [conventions.md](conventions.md).
 
-This is the **reference** algorithm ([design.md](../design.md) §19): at
-every event the 2D VD is **recomputed** at `z±ε`. Incremental 2D updates
-are Phase 9 and must not start until this phase is signed off.
+This is the **reference** algorithm ([design.md](../design.md) §19) plus
+Phase 9 incremental 2D updates: at every event the 2D VD is updated
+locally and checked against a recomputed `z+` slice. See
+[incremental.md](incremental.md).
 
 2D packages must not import `vd3d.sweep` or `vd3d.cells3d`. Kernel
 packages must not import `vd3d.viz`.
@@ -18,8 +19,9 @@ match_cells(vd_before, vd_after) -> tuple[CellMatch, ...]
 cell_signature(vd, cell) -> CellSignature
 compute_vd_around_event(P, event, events) -> vd_before, vd_after, z−, z+
 start_3d_cell / continue_3d_cell / end_3d_cell
-process_event(...) -> vd_after, active, SweepSnapshot
-vertical_decomposition_3d(P) -> SweepResult
+process_event(..., incremental=True) -> vd_after, active, SweepSnapshot
+vertical_decomposition_3d(P, incremental=True) -> SweepResult
+update_2d_decomposition(vd_before, event, P, z+)  # Phase 9
 locate_cell3d(result, point) -> cell id or None
 ```
 

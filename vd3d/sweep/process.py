@@ -1,4 +1,8 @@
-"""Reference ``PROCESS_EVENT``: recompute 2D VD, match, update 3D cells (design §17, §19)."""
+"""``PROCESS_EVENT``: incremental 2D update, match, update 3D cells (design §17).
+
+``compute_vd_at_z`` at ``z±ε`` stays the oracle. The after-slice is produced
+by ``UPDATE_2D_DECOMPOSITION`` and must match the recomputed ``z+`` VD.
+"""
 
 from __future__ import annotations
 
@@ -20,6 +24,7 @@ from vd3d.sweep.matching import (
     unmatched_before,
 )
 from vd3d.sweep.types import CellSignature, SweepSnapshot
+from vd3d.sweep.update import update_2d_decomposition
 from vd3d.vertical_decomposition.types import VerticalDecomposition
 
 
@@ -32,17 +37,33 @@ def process_event(
     current_vd: VerticalDecomposition | None = None,
     *,
     snapshot_dir: Path | None = None,
+    incremental: bool = True,
 ) -> tuple[VerticalDecomposition, dict[CellSignature, ActiveCell], SweepSnapshot]:
-    """Recompute ``vd_before`` / ``vd_after``, match cells, update 3D lifecycle."""
-    vd_before, vd_after, _z_minus, _z_plus = compute_vd_around_event(
+    """Match cells across the event and update the 3D lifecycle.
+
+    ``vd_before`` is always the recomputed ``z−`` slice (geometry for matching).
+    ``vd_after`` is the incremental update unless ``incremental=False``.
+    """
+    vd_before, vd_after_ref, _z_minus, z_plus = compute_vd_around_event(
         planes, event, events
     )
-    if not signatures_unique(vd_before) or not signatures_unique(vd_after):
+    if not signatures_unique(vd_before) or not signatures_unique(vd_after_ref):
         raise RuntimeError("2D cell signatures are not unique at this event")
     if current_vd is not None and not same_combinatorics(current_vd, vd_before):
         raise AssertionError(
             "current 2D VD is not combinatorially equal to the recomputed z− slice"
         )
+    if incremental:
+        vd_after = update_2d_decomposition(vd_before, event, planes, z_plus)
+        if not same_combinatorics(vd_after, vd_after_ref):
+            raise AssertionError(
+                "incremental 2D VD is not combinatorially equal to "
+                f"compute_vd_at_z(z+) for event {event.stable_id}"
+            )
+        if not signatures_unique(vd_after):
+            raise RuntimeError("incremental 2D cell signatures are not unique")
+    else:
+        vd_after = vd_after_ref
 
     matches = match_cells(vd_before, vd_after)
     dying = unmatched_before(vd_before, matches)

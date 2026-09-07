@@ -1,4 +1,4 @@
-"""Reference 3D vertical decomposition: recompute 2D VD at every event (design §18–19)."""
+"""3D vertical decomposition: incremental 2D updates, recompute as oracle (design §18–19)."""
 
 from __future__ import annotations
 
@@ -48,8 +48,11 @@ def vertical_decomposition_3d(
     *,
     snapshot_dir: Path | None = None,
     require_general_position: bool = True,
+    incremental: bool = True,
 ) -> SweepResult:
-    """``VERTICAL_DECOMPOSITION_3D`` with recomputed 2D slices (no incremental update)."""
+    """``VERTICAL_DECOMPOSITION_3D``. After each event the 2D VD is updated
+    incrementally and checked against ``compute_vd_at_z(z+)``.
+    """
     require_unique_plane_ids(planes)
     plane_tuple = tuple(planes)
     events = generate_all_events(plane_tuple)
@@ -99,6 +102,7 @@ def vertical_decomposition_3d(
             active,
             current_vd,
             snapshot_dir=snapshot_dir,
+            incremental=incremental,
         )
         snapshots.append(snapshot)
         intervals.append(

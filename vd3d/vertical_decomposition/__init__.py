@@ -6,6 +6,7 @@ Must not import ``vd3d.sweep`` or ``vd3d.cells3d``.
 from vd3d.vertical_decomposition.cells import (
     collect_decomposition_walls,
     compute_vertical_decomposition,
+    finalize_decomposition_walls,
     insert_decomposition_segment,
 )
 from vd3d.vertical_decomposition.geom import (
@@ -36,6 +37,7 @@ __all__ = [
     "VerticalWall",
     "collect_decomposition_walls",
     "compute_vertical_decomposition",
+    "finalize_decomposition_walls",
     "first_hit",
     "insert_decomposition_segment",
     "line_is_vertical",
