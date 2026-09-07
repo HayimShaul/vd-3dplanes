@@ -36,15 +36,24 @@ Every coordinate and coefficient in the kernel is a `fractions.Fraction`
   intersection lines `L1` and `L2`. Visible if and only if the open vertical
   segment between those two points hits no other arrangement feature.
 
-## General position (first implementation)
+## General position (relaxed in Phase 10)
 
-Assume, until a later robustness phase:
+The first implementation assumed:
 
 - no four planes meet in a common point
 - no two independent events share exactly the same `z`
 - no vertical input plane (`c = 0` in `ax + by + cz + d = 0`)
 - no vertical intersection line (`dx = dy = 0`)
 - no plane pair is parallel unless a test explicitly asks for that case
+
+Phase 10 groups events that share a `z`, walks query lines through
+vertices or along an arrangement line, and runs fixtures with four
+planes at a point and vertical input planes. Horizontal intersection
+lines (`dz = 0`) are still skipped for alignment. Coincident input
+planes are still treated as parallel. See [robustness.md](robustness.md).
+
+Pass `require_general_position=True` to `vertical_decomposition_3d` to
+reject same-`z` groups (`SimultaneousEvents`).
 
 ## Module boundary
 

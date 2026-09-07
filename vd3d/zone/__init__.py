@@ -3,7 +3,11 @@
 Must not import ``vd3d.sweep`` or ``vd3d.cells3d``.
 """
 
-from vd3d.zone.crossings import compute_crossings
+from vd3d.zone.crossings import (
+    coincident_line_indices,
+    collapse_crossings,
+    compute_crossings,
+)
 from vd3d.zone.geom import (
     edge_contains_point,
     point_on_line_at_parameter,
@@ -30,6 +34,8 @@ __all__ = [
     "SupportingLineZone",
     "Zone",
     "ZoneError",
+    "coincident_line_indices",
+    "collapse_crossings",
     "compute_crossings",
     "compute_supporting_line_zone",
     "compute_zone",

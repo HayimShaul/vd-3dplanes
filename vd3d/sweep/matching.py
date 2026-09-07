@@ -144,6 +144,16 @@ def local_cell_ids(vd: VerticalDecomposition, event: Event) -> frozenset[int]:
     return frozenset(extra)
 
 
+def local_cell_ids_for_events(
+    vd: VerticalDecomposition, events: Sequence[Event]
+) -> frozenset[int]:
+    """Union of ``local_cell_ids`` over a simultaneous group."""
+    extra: set[int] = set()
+    for event in events:
+        extra |= local_cell_ids(vd, event)
+    return frozenset(extra)
+
+
 def _signature_multiset(
     vd: VerticalDecomposition,
 ) -> tuple[CellSignature, ...]:

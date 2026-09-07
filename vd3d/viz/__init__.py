@@ -46,6 +46,11 @@ Human review of incremental 2D updates::
 
     python -m vd3d.viz.viewer --phase 9
     python -m vd3d.viz.gallery --step 9
+
+Human review of robustness (simultaneous groups, zone degeneracies)::
+
+    python -m vd3d.viz.viewer --phase 10
+    python -m vd3d.viz.gallery --step 10
 """
 
 from vd3d.viz.convert import to_float

@@ -17,14 +17,16 @@ class ZoneError(ValueError):
 class QueryOverlapsArrangement(ZoneError):
     """Query line is coincident with an arrangement line.
 
-    Deferred until a later robustness pass (design Test 14).
+    Phase 10 handles this inside ``compute_zone`` / ``compute_crossings``.
+    The exception remains for callers that want to reject the case.
     """
 
 
 class QueryThroughVertex(ZoneError):
     """Query line passes through an arrangement vertex.
 
-    Deferred until a later robustness pass (design Test 14).
+    Phase 10 handles this inside ``compute_zone``. The exception remains
+    for callers that want to reject the case.
     """
 
 
@@ -51,8 +53,12 @@ class Zone:
     """Ordered features crossed by a query line that is not an arrangement line.
 
     ``faces[0]`` is the face containing a point of ``L`` before the first
-    crossing. After that, ``faces[i+1]`` is the face on the other side of
-    ``edges[i]``. Under general position ``vertices`` is empty.
+    crossing. After that, for a transverse crossing ``faces[i+1]`` is the
+    face on the other side of ``edges[i]``. Through a vertex, ``faces[i+1]``
+    is the open face of ``L`` just after that vertex. On an overlapping
+    query, ``faces`` are the incident faces of the coincident line in
+    order of first appearance along ``L``. ``vertices`` lists vertex
+    features in walk order.
     """
 
     query: Line2D

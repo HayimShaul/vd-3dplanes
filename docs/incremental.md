@@ -37,7 +37,8 @@ equivalent(incremental_vd, compute_vd_at_z(z+))
 input to the handler (tight local window). The incremental `z+` result
 is asserted against the recomputed `z+` slice, then used for matching
 and the 3D lifecycle. `vertical_decomposition_3d(..., incremental=False)`
-is the Phase 8 path.
+is the Phase 8 path. Events that share a `z` use
+`update_2d_for_event_group` (union of x-windows).
 
 ## Local region
 

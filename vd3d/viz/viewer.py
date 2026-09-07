@@ -13,8 +13,10 @@
     python -m vd3d.viz.viewer --phase 8 --seed 42 --n 4
     python -m vd3d.viz.viewer --phase 9
     python -m vd3d.viz.viewer --phase 9 --seed 42 --n 4
+    python -m vd3d.viz.viewer --phase 10
+    python -m vd3d.viz.viewer --phase 10 --seed 42 --n 4
 
-``--n`` is the number of lines (phases 2–4) or planes (phases 1, 5–9).
+``--n`` is the number of lines (phases 2–4) or planes (phases 1, 5–10).
 Omit it to let each random scene pick a small count.
 
 Keys: left/right or n/p = next/previous scene, g = new random seed,
@@ -150,7 +152,7 @@ def show_phase(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Review geometry and arrangement scenes")
-    parser.add_argument("--phase", type=int, default=1, help="phase number (1–9)")
+    parser.add_argument("--phase", type=int, default=1, help="phase number (1–10)")
     parser.add_argument("--scene", type=str, default=None, help="start at this scene name")
     parser.add_argument(
         "--seed",
@@ -166,7 +168,7 @@ def main(argv: list[str] | None = None) -> int:
         metavar="N",
         dest="n",
         help=(
-            "number of lines (phases 2–4) or planes (phases 1, 5–9). "
+            "number of lines (phases 2–4) or planes (phases 1, 5–10). "
             "Default: each random scene picks a small count."
         ),
     )

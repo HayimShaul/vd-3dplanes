@@ -10,7 +10,9 @@ intersection lines and triple events. Phase 6 implements vertical
 alignment events. Phase 7 implements the combined event list and the
 2D VD of a slice at a given `z`. Phase 8 implements the reference
 `z`-sweep and 3D cells. Phase 9 implements incremental 2D updates
-checked against that recompute.
+checked against that recompute. Phase 10 relaxes general position:
+simultaneous event groups, query lines through vertices or overlapping
+an arrangement edge, four planes at a point, and vertical input planes.
 
 ## Phase 0 discipline
 
@@ -48,8 +50,8 @@ checked against that recompute.
 - [x] Consecutive zone faces are the two sides of the recorded edge (`zone_faces_match_crossings`)
 - [x] The zone face sequence matches independent midpoint location on `L` (`tests/oracles/zone.py`)
 - [x] Supporting-line opposite vertices are vertices of incident faces and do not lie on `L` (`supporting_split_matches_line`)
-- [ ] Query through a vertex (deferred; `QueryThroughVertex`)
-- [ ] Query overlapping an arrangement edge (deferred; `QueryOverlapsArrangement`)
+- [x] Query through a vertex: collapsed crossings, next face by sampling `L` just after the vertex (`tests/unit/test_zone.py`, `tests/unit/test_robustness.py`)
+- [x] Query overlapping an arrangement edge: zone faces equal the supporting-line incident set
 
 ## Event invariants
 
@@ -77,6 +79,10 @@ checked against that recompute.
 - [x] After every event, the incremental 2D VD equals `compute_vd_at_z(z+)` (`equivalent_vd`, `assert_equivalent_vd`, `tests/unit/test_incremental.py`)
 - [x] Incremental walls and trapezoid bounds match the recomputed slice (`wall_keys`, `cell_bound_keys`)
 - [x] Unmatched cells across a triple or alignment stay in the event neighbourhood
+- [x] Events that share a `z` are one `EventGroup` / one snapshot (`group_events_by_z`, `tests/unit/test_robustness.py`)
+- [x] Incremental update of a group equals `compute_vd_at_z(z+)`
+- [x] Four planes through one point: four triples at that `z`, mid-interval and partition oracles
+- [x] Vertical input planes (`c = 0`) slice independently of `z` and still partition
 
 ## 3D cell invariants
 

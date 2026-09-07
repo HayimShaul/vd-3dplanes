@@ -59,7 +59,8 @@ vertex to a *different* point of `L` does not block the event.
 `SLICE_PLANES_BY_WALL` substitutes `x = a z + b` into each input plane.
 `L` is inserted as one wall-line. The two source planes of `L` are
 omitted (they are coincident with `L`). Planes parallel to the wall are
-skipped.
+skipped. Traces coincident with an already-included wall-line are
+dropped (Phase 10: four planes through one point).
 
 ## Oracle (Step 6.2)
 

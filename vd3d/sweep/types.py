@@ -10,7 +10,19 @@ from vd3d.vertical_decomposition.types import VDCell2D
 
 
 class SimultaneousEvents(ValueError):
-    """Two events share a ``z``. Deferred to Phase 10."""
+    """Two events share a ``z``. Raised only when general position is required."""
+
+
+@dataclass(frozen=True, slots=True)
+class EventGroup:
+    """Events that share a ``z`` (design §1.4). General position: length 1."""
+
+    z: Scalar
+    events: tuple[Event, ...]
+
+    @property
+    def representative(self) -> Event:
+        return self.events[0]
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,6 +56,7 @@ class SweepSnapshot:
     started: tuple[int, ...]
     ended: tuple[int, ...]
     n_active: int
+    group_ids: tuple[str, ...] = ()
 
     def as_dict(self) -> dict[str, object]:
         return {
@@ -57,6 +70,7 @@ class SweepSnapshot:
             "ended": list(self.ended),
             "continued": len(self.matches),
             "n_active": self.n_active,
+            "group_ids": list(self.group_ids),
         }
 
 

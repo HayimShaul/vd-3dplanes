@@ -8,13 +8,15 @@ start the next phase until the current one has passed its human gate.
 
 ## Status
 
-**Phase 9 — incremental 2D updates.** At every event the 2D VD is
-updated locally and checked against `compute_vd_at_z(z+)`. Exact
+**Phase 10 — robustness.** Simultaneous event groups, query lines through
+vertices or overlapping an arrangement edge, and a few non-general-position
+fixtures (four planes at a point, vertical input planes). Exact
 `Fraction` arithmetic.
 
-Phases 0–8 are in place. Do not start Phase 10 until you have checked
-the Phase 9 figures against the captions (incremental vs oracle has no
-black cells; before/after matching colours agree far from the event).
+Phases 0–9 are in place. Do not start further work until you have checked
+the Phase 10 figures against the captions (through-vertex walk still
+enters the triangle; overlap paints every face incident to L;
+simultaneous groups are one before/after pair).
 
 ## Install
 
@@ -40,25 +42,30 @@ Do not start the next step if a figure and its caption disagree.
 Commands for the current phase:
 
 ```bash
-# Phase 9
-pytest tests/unit/test_incremental.py tests/visual/test_incremental_visual.py
-python -m vd3d.viz.gallery --step 9
-python -m vd3d.viz.viewer --phase 9
-python -m vd3d.viz.viewer --phase 9 --seed 42 --n 4
+# Phase 10
+pytest tests/unit/test_robustness.py tests/unit/test_zone.py tests/visual/test_robustness_visual.py
+python -m vd3d.viz.gallery --step 10
+python -m vd3d.viz.viewer --phase 10
+python -m vd3d.viz.viewer --phase 10 --seed 42 --n 4
 ```
 
-Confirm: the triple and alignment before/after pairs use the same
-matching colours as Phase 8 (matched share a colour, unmatched are
-**black** only near the event). The incremental-vs-oracle pair has
-**no black cells**.
+Confirm: `y=x` through the origin marks the vertex and still paints the
+triangle; overlapping `y=0` paints every face that touches that side;
+a simultaneous group is **one** before/after pair. Unmatched cells are
+**black** only near the event strip.
 
-`--n` sets the number of random planes (phases 1, 5–9) or lines (phases 2–4).
+`--n` sets the number of random planes (phases 1, 5–10) or lines (phases 2–4).
 Omit it and each random scene picks a small count. `g` resamples with a new
 seed and keeps `n`.
 
 Earlier phases:
 
 ```bash
+# Phase 9
+pytest tests/unit/test_incremental.py tests/visual/test_incremental_visual.py
+python -m vd3d.viz.gallery --step 9
+python -m vd3d.viz.viewer --phase 9
+
 # Phase 8
 pytest tests/unit/test_sweep.py tests/visual/test_sweep_visual.py
 python -m vd3d.viz.gallery --step 8
@@ -121,6 +128,7 @@ python -m vd3d.viz.gallery --step N
 - [docs/event_list.md](docs/event_list.md) — combined events, initial z, VD at a slice
 - [docs/sweep.md](docs/sweep.md) — reference sweep, 3D cells, matching, oracles
 - [docs/incremental.md](docs/incremental.md) — local 2D updates vs recompute oracle
+- [docs/robustness.md](docs/robustness.md) — simultaneous groups, zone degeneracies
 - [docs/invariants.md](docs/invariants.md) — checklist from the design; boxes are checked only when code enforces them
 
 ## Layout

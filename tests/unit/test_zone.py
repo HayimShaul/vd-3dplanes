@@ -17,8 +17,8 @@ from vd3d.arrangement2d.predicates import parameter_on_line
 from vd3d.geometry import Line2D, Point2D
 from vd3d.geometry.scalar import as_scalar
 from vd3d.zone import (
-    QueryOverlapsArrangement,
-    QueryThroughVertex,
+    coincident_line_indices,
+    collapse_crossings,
     compute_crossings,
     compute_supporting_line_zone,
     compute_zone,
@@ -109,10 +109,14 @@ def test_crossings_skip_parallel_to_one_line():
     _assert_crossings_match(crossings, brute_force_crossings(arr, query))
 
 
-def test_crossings_reject_overlap():
+def test_crossings_overlap_are_vertices_on_the_line():
     arr = build_line_arrangement(_triangle())
-    with pytest.raises(QueryOverlapsArrangement):
-        compute_crossings(arr, _y_eq_0())
+    query = _y_eq_0()
+    assert coincident_line_indices(arr, query) == (1,)
+    crossings = compute_crossings(arr, query)
+    assert {c.point for c in crossings} == {Point2D(0, 0), Point2D(1, 0)}
+    assert all(c.vertex_id is not None for c in crossings)
+    _assert_crossings_match(crossings, brute_force_crossings(arr, query))
 
 
 def test_crossings_empty_arrangement():
@@ -245,20 +249,39 @@ def test_zone_near_miss_still_enters_triangle():
         assert not query.contains(vertex.point)
 
 
-def test_through_vertex_rejected():
+def test_through_vertex_walks_opposite_faces():
+    """y = x through the origin of the triangle. Design Test 14."""
     arr = build_line_arrangement(_triangle())
     query = Line2D(a=1, b=-1, c=0)
-    assert any(query.contains(v.point) for v in arr.vertices)
-    with pytest.raises(QueryThroughVertex):
-        compute_zone(arr, query)
-    crossings = compute_crossings(arr, query)
-    assert any(c.vertex_id is not None for c in crossings)
+    origin = Point2D(0, 0)
+    assert query.contains(origin)
+    raw = compute_crossings(arr, query)
+    assert any(c.vertex_id is not None for c in raw)
+    collapsed = collapse_crossings(raw)
+    assert collapsed[0].point == origin
+    assert collapsed[0].vertex_id is not None
+    zone = compute_zone(arr, query)
+    verify_zone_invariants(arr, zone)
+    assert zone.vertices[0].point == origin
+    assert [f.unbounded for f in zone.faces] == [True, False, True]
+    assert zone.faces[1].id == arr.bounded_faces[0].id
+    assert [f.id for f in zone.faces] == list(brute_force_face_ids(arr, query))
+    assert len(zone.faces) == len(zone.crossings) + 1
+    assert len(zone.crossings) < len(raw)
 
 
-def test_overlap_rejected_by_compute_zone():
+def test_overlap_zone_matches_supporting_line_faces():
     arr = build_line_arrangement(_triangle())
-    with pytest.raises(QueryOverlapsArrangement):
-        compute_zone(arr, Line2D(a=1, b=0, c=0))
+    query = Line2D(a=1, b=0, c=0)
+    zone = compute_zone(arr, query)
+    verify_zone_invariants(arr, zone)
+    supporting = compute_supporting_line_zone(arr, 0)
+    assert {f.id for f in zone.faces} == {f.id for f in supporting.faces}
+    assert {v.point for v in zone.vertices} == {
+        v.point for v in supporting.vertices_on_line
+    }
+    assert {e.line_index for e in zone.edges} == {0}
+    assert [f.id for f in zone.faces] == list(brute_force_face_ids(arr, query))
 
 
 # ---------------------------------------------------------------------------

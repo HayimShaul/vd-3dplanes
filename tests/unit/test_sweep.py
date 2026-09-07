@@ -102,13 +102,13 @@ def test_triple_fixture_only_local_neighbourhood_unmatched():
     assert all(cell.id in matched_before for cell in far_before)
 
 
-def test_z_before_after_rejects_simultaneous():
+def test_z_before_after_allows_same_z_group():
     planes = planes_alignment_at_z2()
     events = generate_all_events(planes)
     simultaneous = [event for event in events if event.z == events[0].z]
-    assert len(simultaneous) >= 2
-    with pytest.raises(SimultaneousEvents):
-        z_before_after(simultaneous[0], events)
+    assert len(simultaneous) >= 1
+    z_minus, z_plus = z_before_after(events[0], events)
+    assert z_minus < events[0].z < z_plus
 
 
 # ---------------------------------------------------------------------------
@@ -301,9 +301,11 @@ def test_22_alignment_changes_locally():
         assert cell.id in matched_before
 
 
-def test_simultaneous_events_rejected_on_full_sweep():
+def test_simultaneous_events_rejected_when_required():
     with pytest.raises(SimultaneousEvents):
-        vertical_decomposition_3d(planes_alignment_at_z2())
+        vertical_decomposition_3d(
+            planes_alignment_at_z2(), require_general_position=True
+        )
 
 
 # ---------------------------------------------------------------------------

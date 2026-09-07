@@ -20,7 +20,9 @@ A `Crossing` is an intersection of `L` with one arrangement edge, with
 1D parameter `t` along `L` and `vertex_id` if the hit is a vertex.
 
 A `Zone` is the ordered walk: faces (`cells`), crossed edges, vertices.
-Under general position the vertex list is empty.
+Through a vertex, `vertices` lists that feature and incident-edge hits
+at the same `t` collapse to one crossing. An overlapping query uses the
+incident faces of the coincident line.
 
 ## Direction along `L`
 
@@ -42,27 +44,18 @@ before the first crossing) and steps across each crossed edge via
 
 ## General position (this phase)
 
-`compute_zone` assumes:
+`compute_zone` allows:
 
-- `L` is not coincident with any arrangement line
-- `L` does not pass through an arrangement vertex
+- `L` coincident with an arrangement line (overlap: incident faces of
+  that line, vertices on the line as crossings)
+- `L` through an arrangement vertex (one feature at that `t`; next face
+  by sampling just after the vertex)
 
 Parallel to some arrangement lines is allowed: those edges contribute no
 crossing.
 
-## Known gaps (deferred)
-
-Design Test 14 also asks for overlap-an-edge and through-a-vertex. Both
-are well-defined geometric questions but the walk as written is not:
-overlap has a continuum of intersections, and a vertex has several
-incident edges. They raise
-
-- `QueryOverlapsArrangement`
-- `QueryThroughVertex`
-
-and are left for a later robustness pass. Near-misses are exact
-constructed lines (for example `y = 1/1000`) and must still report the
-correct face sequence.
+Near-misses are exact constructed lines (for example `y = 1/1000`) and
+must still report the correct face sequence.
 
 ## Full zone of a supporting line
 
@@ -104,6 +97,8 @@ python -m vd3d.viz.viewer --phase 4 --seed 42 --n 8
 
 See [invariants.md](invariants.md). Phase 4 checks: crossings sorted along
 `L`; each crossing lies on `L` and on its edge; consecutive zone faces
-are the two sides of the recorded edge; the face sequence matches the
+are the two sides of the recorded edge (or, through a vertex, the open
+faces of `L` just before and after); the face sequence matches the
 midpoint-location oracle; supporting-line opposite vertices are incident
-and off `L`.
+and off `L`. Phase 10 covers overlap and through-vertex; see
+[robustness.md](robustness.md).

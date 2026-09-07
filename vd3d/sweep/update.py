@@ -96,6 +96,19 @@ def local_vertex_plane_keys(
     return frozenset(extra)
 
 
+def local_vertex_plane_keys_for_events(
+    vd_before: VerticalDecomposition,
+    arr_after: Arrangement2D,
+    events: Sequence[Event],
+    planes: Sequence[Plane],
+) -> frozenset[tuple[int, ...]]:
+    """Union of each event's x-window keys (independent simultaneous events)."""
+    keys: set[tuple[int, ...]] = set()
+    for event in events:
+        keys |= local_vertex_plane_keys(vd_before, arr_after, event, planes)
+    return frozenset(keys)
+
+
 def update_2d_decomposition(
     vd_before: VerticalDecomposition,
     event: Event,
@@ -108,6 +121,24 @@ def update_2d_decomposition(
     if event.type is EventType.VERTICAL_ALIGNMENT:
         return update_for_vertical_alignment(vd_before, event, planes, z_after)
     raise ValueError(f"unknown event type: {event.type!r}")
+
+
+def update_2d_for_event_group(
+    vd_before: VerticalDecomposition,
+    events: Sequence[Event],
+    planes: Sequence[Plane],
+    z_after: int | Scalar | str,
+) -> VerticalDecomposition:
+    """Local update for every event that shares a ``z`` (one transaction)."""
+    if not events:
+        raise ValueError("empty event group")
+    if len(events) == 1:
+        return update_2d_decomposition(vd_before, events[0], planes, z_after)
+    arr_after = build_2d_arrangement_at_z(planes, z_after)
+    local_keys = local_vertex_plane_keys_for_events(
+        vd_before, arr_after, events, planes
+    )
+    return _rebuild(vd_before, arr_after, local_keys)
 
 
 def update_for_triple_intersection(
@@ -142,6 +173,14 @@ def _update_local(
 ) -> VerticalDecomposition:
     arr_after = build_2d_arrangement_at_z(planes, z_after)
     local_keys = local_vertex_plane_keys(vd_before, arr_after, event, planes)
+    return _rebuild(vd_before, arr_after, local_keys)
+
+
+def _rebuild(
+    vd_before: VerticalDecomposition,
+    arr_after: Arrangement2D,
+    local_keys: frozenset[tuple[int, ...]],
+) -> VerticalDecomposition:
     walls = _incremental_walls(vd_before, arr_after, local_keys)
     cells = build_cells(arr_after, walls)
     return VerticalDecomposition(

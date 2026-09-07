@@ -41,9 +41,10 @@ planes, left/right boundedness, and the planes of vertices on that
 cell's own vertical sides). Signatures are unique in a slice and stable
 inside an open `z` interval.
 
-`z±ε` uses `ε = 1/100`, or half the gap to the neighbouring event if
-that is smaller. Two events at the same `z` raise `SimultaneousEvents`
-(Phase 10).
+`z±ε` uses `ε = 1/100`, or half the gap to the neighbouring **distinct**
+event height if that is smaller. Events that share a `z` are one
+`EventGroup` (Phase 10). Pass `require_general_position=True` to raise
+`SimultaneousEvents` instead.
 
 ## 3D cell lifecycle
 
@@ -68,7 +69,7 @@ at `+∞`. Invariant: `|active 3D cells| == |current 2D cells|`.
 - **21.** Three planes, one triple: only the local neighbourhood fails
   to match 1-1; far cells keep their colour.
 - **22.** Alignment at `z = 2` (isolated from the fixture's simultaneous
-  triples): combinatorics change locally; far cells still match.
+  triples in Phase 8 tests; Phase 10 runs the full grouped sweep).
 
 ## Global oracles
 

@@ -15,8 +15,8 @@ from vd3d.events.slice import compute_vd_at_z
 from vd3d.events.types import Event
 from vd3d.geometry.plane import Plane
 from vd3d.sweep.matching import cell_signature, signatures_unique
-from vd3d.sweep.process import process_event
-from vd3d.sweep.types import CellSignature, SimultaneousEvents, SweepSnapshot, ZInterval
+from vd3d.sweep.process import process_event_group
+from vd3d.sweep.types import CellSignature, EventGroup, SimultaneousEvents, SweepSnapshot, ZInterval
 from vd3d.vertical_decomposition.types import VerticalDecomposition
 
 
@@ -32,14 +32,14 @@ class SweepResult:
     initial_vd: VerticalDecomposition
 
 
-def group_events_by_z(events: Sequence[Event]) -> tuple[tuple[Event, ...], ...]:
+def group_events_by_z(events: Sequence[Event]) -> tuple[EventGroup, ...]:
     """Consecutive events that share a ``z``. General position: each group has one."""
-    groups: list[tuple[Event, ...]] = []
+    groups: list[EventGroup] = []
     for event in events:
-        if groups and groups[-1][0].z == event.z:
-            groups[-1] = (*groups[-1], event)
+        if groups and groups[-1].z == event.z:
+            groups[-1] = EventGroup(z=event.z, events=(*groups[-1].events, event))
         else:
-            groups.append((event,))
+            groups.append(EventGroup(z=event.z, events=(event,)))
     return tuple(groups)
 
 
@@ -47,11 +47,14 @@ def vertical_decomposition_3d(
     planes: Sequence[Plane],
     *,
     snapshot_dir: Path | None = None,
-    require_general_position: bool = True,
+    require_general_position: bool = False,
     incremental: bool = True,
 ) -> SweepResult:
-    """``VERTICAL_DECOMPOSITION_3D``. After each event the 2D VD is updated
-    incrementally and checked against ``compute_vd_at_z(z+)``.
+    """``VERTICAL_DECOMPOSITION_3D``. After each event group the 2D VD is
+    updated incrementally and checked against ``compute_vd_at_z(z+)``.
+
+    Events that share a ``z`` are one transaction. Pass
+    ``require_general_position=True`` to reject those groups.
     """
     require_unique_plane_ids(planes)
     plane_tuple = tuple(planes)
@@ -59,10 +62,10 @@ def vertical_decomposition_3d(
     groups = group_events_by_z(events)
     if require_general_position:
         for group in groups:
-            if len(group) != 1:
+            if len(group.events) != 1:
                 raise SimultaneousEvents(
-                    f"{len(group)} events share z={group[0].z}; "
-                    "simultaneous groups are Phase 10"
+                    f"{len(group.events)} events share z={group.z}; "
+                    "pass require_general_position=False to process the group"
                 )
 
     z0 = choose_z_below_all_events(events)
@@ -93,10 +96,9 @@ def vertical_decomposition_3d(
     )
 
     for group in groups:
-        event = group[0]
-        current_vd, active, snapshot = process_event(
+        current_vd, active, snapshot = process_event_group(
             plane_tuple,
-            event,
+            group.events,
             events,
             cells,
             active,
@@ -107,8 +109,8 @@ def vertical_decomposition_3d(
         snapshots.append(snapshot)
         intervals.append(
             ZInterval(
-                lower_z=event.z,
-                upper_z=_next_z(events, event),
+                lower_z=group.z,
+                upper_z=_next_z(events, group.z),
                 binding=_bind(current_vd),
             )
         )
@@ -131,6 +133,6 @@ def _first_z(events: Sequence[Event]):
     return None if not events else events[0].z
 
 
-def _next_z(events: Sequence[Event], event: Event):
-    remaining = [other.z for other in events if other.z > event.z]
+def _next_z(events: Sequence[Event], z):
+    remaining = [other.z for other in events if other.z > z]
     return None if not remaining else min(remaining)

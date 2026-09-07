@@ -58,6 +58,8 @@ def slice_planes_by_wall(planes: Sequence[Plane], wall: Plane, line: Line3D) -> 
     """Wall-frame lines: ``L`` first, then every other non-parallel plane.
 
     Source planes of ``L`` are omitted; they are coincident with ``L``.
+    Other traces coincident with an already-included wall-line are
+    dropped (four planes through one point can produce duplicate traces).
     """
     query = represent_line_on_wall(line)
     source = {line.plane_a, line.plane_b}
@@ -71,7 +73,12 @@ def slice_planes_by_wall(planes: Sequence[Plane], wall: Plane, line: Line3D) -> 
         traced = plane_on_wall(plane, wall)
         if traced is None:
             continue
-        if intersect_lines_2d(query, traced) is COINCIDENT:
+        skip = False
+        for existing in out:
+            if intersect_lines_2d(existing, traced) is COINCIDENT:
+                skip = True
+                break
+        if skip:
             continue
         out.append(Line2D(
             a=traced.a,
