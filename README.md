@@ -1,22 +1,13 @@
 # Vertical decomposition of planes in 3D
 
 Sweep-based vertical decomposition of an arrangement of planes, following
-[design.md](design.md).
-
-This is an incremental implementation. Each phase is small on purpose. Do not
-start the next phase until the current one has passed its human gate.
+[design.md](design.md). Exact `Fraction` arithmetic throughout.
 
 ## Status
 
-**Phase 10 — robustness.** Simultaneous event groups, query lines through
-vertices or overlapping an arrangement edge, and a few non-general-position
-fixtures (four planes at a point, vertical input planes). Exact
-`Fraction` arithmetic.
-
-Phases 0–9 are in place. Do not start further work until you have checked
-the Phase 10 figures against the captions (through-vertex walk still
-enters the triangle; overlap paints every face incident to L;
-simultaneous groups are one before/after pair).
+Implemented end to end: events, incremental 2D updates, 3D cell lifecycle,
+and point location. For debugging, `--show-sweep` steps through each event
+and shows how the sweep-plane vertical decomposition evolves before and after.
 
 ## Install
 
@@ -58,94 +49,6 @@ semi-transparent red (unbounded faces clipped to a viewing cube). With
 arrangement lines, dashed vertical walls, adjacency-coloured cells with ids,
 and a red event marker.
 
-## How to review a step
-
-Every step ships three things: unit tests, inspectable figures, and docs.
-A step is done only when all three hold:
-
-1. That step's unit tests are green.
-2. You open the review surface and the figures match the captions.
-3. The docs for that step list the invariants that are actually checked.
-
-Do not start the next step if a figure and its caption disagree.
-
-Commands for the current phase:
-
-```bash
-# Phase 10
-pytest tests/unit/test_robustness.py tests/unit/test_zone.py tests/visual/test_robustness_visual.py
-python -m vd3d.viz.gallery --step 10
-python -m vd3d.viz.viewer --phase 10
-python -m vd3d.viz.viewer --phase 10 --seed 42 --n 4
-```
-
-Confirm: `y=x` through the origin marks the vertex and still paints the
-triangle; overlapping `y=0` paints every face that touches that side;
-a simultaneous group is **one** before/after pair. Unmatched cells are
-**black** only near the event strip.
-
-`--n` sets the number of random planes (phases 1, 5–10) or lines (phases 2–4).
-Omit it and each random scene picks a small count. `g` resamples with a new
-seed and keeps `n`.
-
-Earlier phases:
-
-```bash
-# Phase 9
-pytest tests/unit/test_incremental.py tests/visual/test_incremental_visual.py
-python -m vd3d.viz.gallery --step 9
-python -m vd3d.viz.viewer --phase 9
-
-# Phase 8
-pytest tests/unit/test_sweep.py tests/visual/test_sweep_visual.py
-python -m vd3d.viz.gallery --step 8
-python -m vd3d.viz.viewer --phase 8
-
-# Phase 7
-pytest tests/unit/test_event_list.py tests/visual/test_event_list_visual.py
-python -m vd3d.viz.gallery --step 7
-python -m vd3d.viz.viewer --phase 7
-
-# Phase 6
-pytest tests/unit/test_alignment.py tests/visual/test_alignment_visual.py
-python -m vd3d.viz.gallery --step 6
-python -m vd3d.viz.viewer --phase 6
-
-# Phase 5
-pytest tests/unit/test_events.py tests/visual/test_events_visual.py
-python -m vd3d.viz.gallery --step 5
-python -m vd3d.viz.viewer --phase 5
-
-# Phase 4
-pytest tests/unit/test_zone.py tests/visual/test_zone_visual.py
-python -m vd3d.viz.gallery --step 4
-python -m vd3d.viz.viewer --phase 4
-
-# Phase 3
-pytest tests/unit/test_vertical_decomposition.py tests/visual/test_vd2d_visual.py
-python -m vd3d.viz.gallery --step 3
-
-# Phase 2
-pytest tests/unit/test_arrangement2d.py tests/visual/test_arrangement2d_visual.py
-python -m vd3d.viz.gallery --step 2
-
-# Phase 1 (rotate the 3D scenes)
-pytest tests/unit/test_geometry.py tests/unit/test_scenes.py
-python -m vd3d.viz.viewer --phase 1
-python -m vd3d.viz.viewer --phase 1 --seed 42
-
-# Phase 0 (gallery pipeline)
-pytest tests/unit/test_scalar.py tests/unit/test_linalg.py tests/unit/test_architecture.py tests/visual/test_gallery_smoke.py
-python -m vd3d.viz.gallery --step 0
-```
-
-Later phases use the same pattern:
-
-```bash
-pytest tests/unit/test_<module>.py
-python -m vd3d.viz.gallery --step N
-```
-
 ## Conventions and invariants
 
 - [docs/conventions.md](docs/conventions.md) — axes, "vertical", exact arithmetic, general position
@@ -171,3 +74,11 @@ tests/visual/         write PNG + caption under artifacts/visual/
 tests/oracles/        slow brute-force checkers
 artifacts/visual/     generated review gallery (gitignored)
 ```
+
+## License
+
+This software is provided as-is, without warranty of any kind. I would like
+it to be bug-free, but I cannot guarantee that. There is no support beyond
+what I can do in my free time.
+
+If you use this project in your research, please cite it.
