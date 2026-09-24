@@ -82,3 +82,7 @@ it to be bug-free, but I cannot guarantee that. There is no support beyond
 what I can do in my free time.
 
 If you use this project in your research, please cite it.
+
+## Author
+
+Hayim Shaul.
