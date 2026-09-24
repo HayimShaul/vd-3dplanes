@@ -25,6 +25,8 @@ from vd3d.events.samples import (
     planes_vertical_and_slanted,
 )
 from vd3d.geometry import Line2D, Point2D, slice_plane_at_z
+from vd3d.geometry.sampling import random_general_position_planes
+from vd3d.geometry.scalar import as_scalar
 from vd3d.sweep import (
     SimultaneousEvents,
     compute_vd_around_event,
@@ -172,6 +174,32 @@ def test_group_incremental_matches_recompute():
     assert wall_keys(incremental.walls) == wall_keys(vd_ref.walls)
     assert cell_bound_keys(incremental) == cell_bound_keys(vd_ref)
     verify_vd_invariants(incremental)
+
+
+def test_simultaneous_triples_with_gap_vertex_seed10():
+    """Two same-z triples whose x-windows leave a vertex between them.
+
+    Regression for ``--random-planes 4 --seed 10``: the mid-strip vertex
+    (planes 1∩3) must be in the group's local window or the incremental
+    VD gains an extra cell.
+    """
+    planes = random_general_position_planes(random.Random(10), 4)
+    result = vertical_decomposition_3d(planes, incremental=True)
+    verify_cells3d(result.cells)
+    groups = group_events_by_z(result.events)
+    multi = next(group for group in groups if len(group.events) > 1)
+    assert multi.z == as_scalar("-1/2")
+    assert {e.stable_id for e in multi.events} == {
+        "triple:1:2:4",
+        "triple:2:3:4",
+    }
+    events = result.events
+    vd_before, vd_ref, _, z_plus = compute_vd_around_event(
+        planes, multi.representative, events
+    )
+    incremental = update_2d_for_event_group(vd_before, multi.events, planes, z_plus)
+    assert_equivalent_vd(incremental, vd_ref, label=f"group z={multi.z}")
+    assert_mid_interval_matches_recompute(result)
 
 
 # ---------------------------------------------------------------------------

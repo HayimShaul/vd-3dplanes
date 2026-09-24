@@ -28,6 +28,36 @@ python -m pip install -e ".[dev]"
 
 Requires Python 3.11+. The virtual environment is gitignored.
 
+## Compute a vertical decomposition
+
+```bash
+# from a plane file (each line: a b c d, or id a b c d; # comments ok)
+python -m vd3d examples/three_planes.txt
+
+# debug: N random general-position planes, optional seed
+python -m vd3d --random-planes 5 --seed 42
+
+# write the sampled planes for reuse
+python -m vd3d --random-planes 5 --seed 42 --write-planes /tmp/planes.txt
+
+# interactive 3D view (n/p cells, +/- zoom, arrows rotate, q quit)
+python -m vd3d examples/three_planes.txt --gui
+python -m vd3d --random-planes 4 --seed 42 --gui
+
+# sweep-plane before/after each event (n/p events, pan/zoom, z/Z α)
+python -m vd3d examples/three_planes.txt --show-sweep
+python -m vd3d --random-planes 4 --seed 42 --show-sweep
+```
+
+Coefficients are exact (`int` or Fraction strings like `3/2`). The plane
+equation is `a*x + b*y + c*z + d = 0`. Output lists every 3D cell with its
+floor, ceiling, vertical walls, and z-extent. With `--gui`, input planes are
+transparent grey, intersection lines dark grey, and the selected cell's walls
+semi-transparent red (unbounded faces clipped to a viewing cube). With
+`--show-sweep`, each event shows the 2D VD at `z±α` side by side: solid
+arrangement lines, dashed vertical walls, adjacency-coloured cells with ids,
+and a red event marker.
+
 ## How to review a step
 
 Every step ships three things: unit tests, inspectable figures, and docs.

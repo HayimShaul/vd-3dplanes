@@ -1,0 +1,5 @@
+# Three planes through (1, 2, 3). Equation: a*x + b*y + c*z + d = 0
+# Format: a b c d   (ids assigned 1..n)  or  id a b c d
+1 0 1 -4
+0 1 1 -5
+1 1 1 -6

@@ -16,6 +16,9 @@ dev = [
     "matplotlib>=3.8",
 ]
 
+[project.scripts]
+vd3d = "vd3d.cli:main"
+
 [tool.setuptools.packages.find]
 include = ["vd3d*"]
 

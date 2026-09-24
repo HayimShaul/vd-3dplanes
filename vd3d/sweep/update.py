@@ -102,11 +102,37 @@ def local_vertex_plane_keys_for_events(
     events: Sequence[Event],
     planes: Sequence[Plane],
 ) -> frozenset[tuple[int, ...]]:
-    """Union of each event's x-window keys (independent simultaneous events)."""
-    keys: set[tuple[int, ...]] = set()
+    """Vertices in the closed x-window spanning every event in the group.
+
+    Simultaneous events must share one strip: taking the union of each
+    event's private window can miss vertices that sit between two
+    same-``z`` features (those still need to be reshot).
+    """
+    if not events:
+        return frozenset()
+    if len(events) == 1:
+        return local_vertex_plane_keys(vd_before, arr_after, events[0], planes)
+
+    event_keys: set[tuple[int, ...]] = set()
     for event in events:
-        keys |= local_vertex_plane_keys(vd_before, arr_after, event, planes)
-    return frozenset(keys)
+        event_keys |= event_vertex_plane_keys(event, planes)
+
+    xs: list[Scalar] = []
+    for arrangement in (vd_before.arrangement, arr_after):
+        for vertex in arrangement.vertices:
+            if vertex_plane_key(arrangement, vertex) in event_keys:
+                xs.append(vertex.point.x)
+
+    extra: set[tuple[int, ...]] = set(event_keys)
+    if not xs:
+        return frozenset(extra)
+    x_lo, x_hi = min(xs), max(xs)
+    for arrangement in (vd_before.arrangement, arr_after):
+        for vertex in arrangement.vertices:
+            x = vertex.point.x
+            if x_lo <= x <= x_hi:
+                extra.add(vertex_plane_key(arrangement, vertex))
+    return frozenset(extra)
 
 
 def update_2d_decomposition(
