@@ -78,7 +78,11 @@ def test_match_far_from_event_is_identity_on_same_slice():
 
 
 def test_triple_fixture_only_local_neighbourhood_unmatched():
-    """Test 21: far cells match 1-1; only the triple neighbourhood fails."""
+    """Test 21: unmatched cells lie in the event neighbourhood.
+
+    Far cells (if any) continue 1-1. A side-wall change counts as unmatched
+    even when floor and ceiling stay the same.
+    """
     planes = planes_through_123()
     events = generate_all_events(planes)
     assert len(events) == 1
@@ -90,9 +94,12 @@ def test_triple_fixture_only_local_neighbourhood_unmatched():
     matches = match_cells(vd_before, vd_after)
     dying = unmatched_before(vd_before, matches)
     born = unmatched_after(vd_after, matches)
-    assert len(matches) >= 1
     assert len(dying) >= 1
     assert len(born) >= 1
+    for pair in matches:
+        assert cell_signature(vd_before, pair.before) == cell_signature(
+            vd_after, pair.after
+        )
     local_before = local_cell_ids(vd_before, event)
     local_after = local_cell_ids(vd_after, event)
     assert {cell.id for cell in dying} <= local_before
@@ -100,6 +107,44 @@ def test_triple_fixture_only_local_neighbourhood_unmatched():
     far_before = [cell for cell in vd_before.cells if cell.id not in local_before]
     matched_before = {pair.before.id for pair in matches}
     assert all(cell.id in matched_before for cell in far_before)
+
+
+def test_match_requires_same_side_walls():
+    """CLI seed 10 event 2: wall-flip cells end even if floor/ceiling match."""
+    from vd3d.geometry.sampling import random_general_position_planes
+    from vd3d.sweep import group_events_by_z
+    from vd3d.sweep.locate import interval_containing
+
+    planes = random_general_position_planes(random.Random(10), 4)
+    events = generate_all_events(planes)
+    groups = group_events_by_z(events)
+    assert len(groups) == 5
+    # Second group (1-based 2/5): alignment; two cells keep floor/ceiling but
+    # change a side wall, and one cell's supporting planes change.
+    group = groups[1]
+    event = group.representative
+    assert event.type is EventType.VERTICAL_ALIGNMENT
+    vd_before, vd_after, z_minus, _ = compute_vd_around_event(planes, event, events)
+    matches = match_cells(vd_before, vd_after)
+    for pair in matches:
+        assert cell_signature(vd_before, pair.before) == cell_signature(
+            vd_after, pair.after
+        )
+    dying_ids = {cell.id for cell in unmatched_before(vd_before, matches)}
+    born_ids = {cell.id for cell in unmatched_after(vd_after, matches)}
+    # 12: right wall (3,4)->(1,2); 17: left wall (1,2)->(3,4); 16: floor/ceiling.
+    assert dying_ids == {12, 16, 17}
+    assert len(born_ids) == 3
+
+    result = vertical_decomposition_3d(planes)
+    before_interval = interval_containing(result, z_minus)
+    assert before_interval is not None
+    lookup = before_interval.lookup()
+    for cell2d_id in dying_ids:
+        cell2d = vd_before.cells[cell2d_id]
+        cell3d_id = lookup[cell_signature(vd_before, cell2d)]
+        assert result.cells[cell3d_id].upper_z == event.z
+    assert sum(1 for cell in result.cells if cell.lower_z == event.z) == 3
 
 
 def test_z_before_after_allows_same_z_group():

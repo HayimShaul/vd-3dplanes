@@ -53,11 +53,13 @@ def match_cells(
     vd_before: VerticalDecomposition,
     vd_after: VerticalDecomposition,
 ) -> tuple[CellMatch, ...]:
-    """Mutual geometric point-in-cell, restricted to the same supporting planes.
+    """Mutual geometric point-in-cell, restricted to the same cell signature.
 
     A before-cell continues as an after-cell when each representative lies in
-    the other cell and the lower/upper source planes agree. Far from an event
-    this is 1-1; the event neighbourhood is the unmatched remainder.
+    the other cell and the combinatorial signature agrees (floor, ceiling, and
+    left/right wall planes). A wall change ends the 3D cell even if floor and
+    ceiling stay the same. Far from an event this is 1-1; the event
+    neighbourhood is the unmatched remainder.
     """
     matches: list[CellMatch] = []
     used_after: set[int] = set()
@@ -68,7 +70,7 @@ def match_cells(
         back = locate_cell(vd_before, cell_after.representative, closed=False)
         if back is None or back.id != cell_before.id:
             continue
-        if supporting_plane_ids(vd_before, cell_before) != supporting_plane_ids(
+        if cell_signature(vd_before, cell_before) != cell_signature(
             vd_after, cell_after
         ):
             continue
