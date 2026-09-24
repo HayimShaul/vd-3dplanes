@@ -49,6 +49,101 @@ semi-transparent red (unbounded faces clipped to a viewing cube). With
 arrangement lines, dashed vertical walls, adjacency-coloured cells with ids,
 and a red event marker.
 
+### Example: `--random-planes 4 --seed 10 --show-sweep`
+
+```bash
+python -m vd3d --random-planes 4 --seed 10 --show-sweep
+```
+
+![Sweep-plane before/after at the first event (seed 10)](docs/images/show-sweep-random-4-seed-10.png)
+
+```text
+warning: 2 events share z=-1/2 (TRIPLE_INTERSECTION, TRIPLE_INTERSECTION); planes are not in general position
+planes: 4
+events: 6
+intervals: 6
+cells: 70
+seed: 10
+
+input planes:
+  P1: -4x+2y+3z-4=0
+  P2: -x+3y+3z=0
+  P3: -2x-4y+4z+3=0
+  P4: x-3y-z+1=0
+
+3D cells:
+  cell 0: floor=unbounded ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-z+1/2=0] z=(-∞, -5/3)
+  cell 1: floor=P1:-4x+2y+3z-4=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-8/5z-1/2=0] z=(-∞, -5/3)
+  cell 2: floor=P4:x-3y-z+1=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-12/5z-9/10=0] z=(-∞, -19/17)
+  cell 3: floor=P2:-x+3y+3z=0 ceiling=P3:-2x-4y+4z+3=0 walls=[none] z=(-∞, -1)
+  cell 4: floor=P3:-2x-4y+4z+3=0 ceiling=unbounded walls=[P-1:x-12/5z-9/10=0] z=(-∞, -1)
+  cell 5: floor=P4:x-3y-z+1=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-12/5z-9/10=0] z=(-∞, -5/3)
+  cell 6: floor=P3:-2x-4y+4z+3=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-8/5z-1/2=0] z=(-∞, -5/3)
+  cell 7: floor=P2:-x+3y+3z=0 ceiling=unbounded walls=[P-1:x-12/5z-9/10=0, P-1:x-3/10z+6/5=0] z=(-∞, -1)
+  cell 8: floor=P1:-4x+2y+3z-4=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-8/5z-1/2=0] z=(-∞, -5/3)
+  cell 9: floor=P3:-2x-4y+4z+3=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-z+1/2=0] z=(-∞, -5/3)
+  cell 10: floor=P4:x-3y-z+1=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-8/5z-1/2=0, P-1:x-7/10z+1=0] z=(-∞, -5/3)
+  cell 11: floor=unbounded ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-z+1/2=0] z=(-∞, -5/3)
+  cell 12: floor=P3:-2x-4y+4z+3=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-7/10z+1=0] z=(-∞, -5/3)
+  cell 13: floor=P1:-4x+2y+3z-4=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-z+1/2=0] z=(-∞, -5/3)
+  cell 14: floor=P3:-2x-4y+4z+3=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-7/10z+1=0] z=(-∞, -5/3)
+  cell 15: floor=P4:x-3y-z+1=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-3/10z+6/5=0] z=(-∞, -5/3)
+  cell 16: floor=P1:-4x+2y+3z-4=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-7/10z+1=0] z=(-∞, -5/3)
+  cell 17: floor=P4:x-3y-z+1=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-3/10z+6/5=0] z=(-∞, -17/13)
+  cell 18: floor=P2:-x+3y+3z=0 ceiling=P1:-4x+2y+3z-4=0 walls=[none] z=(-∞, -1)
+  cell 19: floor=P1:-4x+2y+3z-4=0 ceiling=unbounded walls=[P-1:x-3/10z+6/5=0] z=(-∞, -1)
+  cell 20: floor=unbounded ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-7/10z+1=0] z=(-5/3, -1/2)
+  cell 21: floor=P1:-4x+2y+3z-4=0 ceiling=P4:x-3y-z+1=0 walls=[none] z=(-5/3, -1/2)
+  cell 22: floor=P4:x-3y-z+1=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-12/5z-9/10=0, P-1:x-7/10z+1=0] z=(-5/3, -19/17)
+  cell 23: floor=P3:-2x-4y+4z+3=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-z+1/2=0] z=(-5/3, -1)
+  cell 24: floor=unbounded ceiling=P4:x-3y-z+1=0 walls=[P-1:x-7/10z+1=0, P-1:x-8/5z-1/2=0] z=(-5/3, -1/2)
+  cell 25: floor=P4:x-3y-z+1=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-z+1/2=0] z=(-5/3, -1)
+  cell 26: floor=P1:-4x+2y+3z-4=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-7/10z+1=0] z=(-5/3, -19/17)
+  cell 27: floor=P4:x-3y-z+1=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-z+1/2=0] z=(-5/3, -1)
+  cell 28: floor=P3:-2x-4y+4z+3=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-8/5z-1/2=0] z=(-5/3, -17/13)
+  cell 29: floor=P1:-4x+2y+3z-4=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-z+1/2=0] z=(-5/3, -1)
+  cell 30: floor=unbounded ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-8/5z-1/2=0] z=(-5/3, -1/2)
+  cell 31: floor=P3:-2x-4y+4z+3=0 ceiling=P4:x-3y-z+1=0 walls=[none] z=(-5/3, -1/2)
+  cell 32: floor=P4:x-3y-z+1=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-8/5z-1/2=0, P-1:x-3/10z+6/5=0] z=(-5/3, -17/13)
+  cell 33: floor=P3:-2x-4y+4z+3=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-3/10z+6/5=0] z=(-17/13, -1)
+  cell 34: floor=P3:-2x-4y+4z+3=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-3/10z+6/5=0, P-1:x-8/5z-1/2=0] z=(-17/13, -1)
+  cell 35: floor=P4:x-3y-z+1=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-8/5z-1/2=0] z=(-17/13, -1/2)
+  cell 36: floor=P4:x-3y-z+1=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-7/10z+1=0] z=(-19/17, -1/2)
+  cell 37: floor=P1:-4x+2y+3z-4=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-7/10z+1=0, P-1:x-12/5z-9/10=0] z=(-19/17, -1)
+  cell 38: floor=P1:-4x+2y+3z-4=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-12/5z-9/10=0] z=(-19/17, -1)
+  cell 39: floor=P2:-x+3y+3z=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-3/10z+6/5=0] z=(-1, -1/2)
+  cell 40: floor=P3:-2x-4y+4z+3=0 ceiling=unbounded walls=[P-1:x-z+1/2=0] z=(-1, +∞)
+  cell 41: floor=P4:x-3y-z+1=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-3/10z+6/5=0] z=(-1, -1/2)
+  cell 42: floor=P1:-4x+2y+3z-4=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-7/10z+1=0] z=(-1, -1/2)
+  cell 43: floor=P4:x-3y-z+1=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-3/10z+6/5=0, P-1:x-12/5z-9/10=0] z=(-1, -1/2)
+  cell 44: floor=P2:-x+3y+3z=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-z+1/2=0] z=(-1, -1/2)
+  cell 45: floor=P1:-4x+2y+3z-4=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-3/10z+6/5=0] z=(-1, -1/2)
+  cell 46: floor=P2:-x+3y+3z=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-z+1/2=0] z=(-1, -1/2)
+  cell 47: floor=P3:-2x-4y+4z+3=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-12/5z-9/10=0] z=(-1, -1/2)
+  cell 48: floor=P1:-4x+2y+3z-4=0 ceiling=unbounded walls=[P-1:x-z+1/2=0] z=(-1, +∞)
+  cell 49: floor=P4:x-3y-z+1=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-12/5z-9/10=0] z=(-1, -1/2)
+  cell 50: floor=P3:-2x-4y+4z+3=0 ceiling=P2:-x+3y+3z=0 walls=[P-1:x-8/5z-1/2=0] z=(-1, -1/2)
+  cell 51: floor=P2:-x+3y+3z=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-12/5z-9/10=0] z=(-1, -1/2)
+  cell 52: floor=unbounded ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-3/10z+6/5=0] z=(-1/2, +∞)
+  cell 53: floor=P1:-4x+2y+3z-4=0 ceiling=P2:-x+3y+3z=0 walls=[none] z=(-1/2, +∞)
+  cell 54: floor=P2:-x+3y+3z=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-3/10z+6/5=0] z=(-1/2, +∞)
+  cell 55: floor=P4:x-3y-z+1=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-7/10z+1=0] z=(-1/2, +∞)
+  cell 56: floor=unbounded ceiling=P2:-x+3y+3z=0 walls=[P-1:x-3/10z+6/5=0, P-1:x-12/5z-9/10=0] z=(-1/2, +∞)
+  cell 57: floor=P2:-x+3y+3z=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-7/10z+1=0] z=(-1/2, +∞)
+  cell 58: floor=P1:-4x+2y+3z-4=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-3/10z+6/5=0] z=(-1/2, +∞)
+  cell 59: floor=P4:x-3y-z+1=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-z+1/2=0] z=(-1/2, +∞)
+  cell 60: floor=P2:-x+3y+3z=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-7/10z+1=0, P-1:x-8/5z-1/2=0] z=(-1/2, +∞)
+  cell 61: floor=P1:-4x+2y+3z-4=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-7/10z+1=0] z=(-1/2, +∞)
+  cell 62: floor=P4:x-3y-z+1=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-z+1/2=0] z=(-1/2, +∞)
+  cell 63: floor=P3:-2x-4y+4z+3=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-8/5z-1/2=0] z=(-1/2, +∞)
+  cell 64: floor=P2:-x+3y+3z=0 ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-8/5z-1/2=0] z=(-1/2, +∞)
+  cell 65: floor=P3:-2x-4y+4z+3=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-12/5z-9/10=0] z=(-1/2, +∞)
+  cell 66: floor=P4:x-3y-z+1=0 ceiling=P1:-4x+2y+3z-4=0 walls=[P-1:x-8/5z-1/2=0] z=(-1/2, +∞)
+  cell 67: floor=unbounded ceiling=P3:-2x-4y+4z+3=0 walls=[P-1:x-12/5z-9/10=0] z=(-1/2, +∞)
+  cell 68: floor=P3:-2x-4y+4z+3=0 ceiling=P2:-x+3y+3z=0 walls=[none] z=(-1/2, +∞)
+  cell 69: floor=P2:-x+3y+3z=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-12/5z-9/10=0] z=(-1/2, +∞)
+```
+
 ## Conventions and invariants
 
 - [docs/conventions.md](docs/conventions.md) — axes, "vertical", exact arithmetic, general position
