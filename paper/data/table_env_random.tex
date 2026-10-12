@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrrrrrr}
+\toprule
+$n$ & active & env.\ facets & cells & $t_{\text{hull}}$ (s) & $t_{\text{trap}}$ (s) & float (s) & exact/float \\
+\midrule
+4 & 4 & 2 & 10 & 0.0002 & 0.0015 & 0.0007 & $2.3\times$ \\
+8 & 6 & 5 & 24 & 0.0012 & 0.0064 & 0.0022 & $3.5\times$ \\
+16 & 6 & 6 & 23 & 0.0103 & 0.0150 & 0.0051 & $5.2\times$ \\
+24 & 7 & 7 & 34 & 0.0354 & 0.0410 & 0.0123 & $6.3\times$ \\
+32 & 7 & 6 & 26 & 0.0877 & 0.0594 & 0.0182 & $8.7\times$ \\
+48 & 7 & 6 & 26 & 0.3057 & 0.1199 & 0.0419 & $9.6\times$ \\
+64 & 7 & 7 & 28 & 0.7248 & 0.2312 & 0.0798 & $12.1\times$ \\
+96 & 6 & 6 & 29 & 2.4191 & 0.4739 & 0.1673 & $17.6\times$ \\
+\midrule
+\multicolumn{8}{l}{Fits: active ${\sim}n^{0.14}$, facets ${\sim}n^{0.31}$, cells ${\sim}n^{0.26}$, $t_{\text{hull}} {\sim} n^{2.99}$, $t_{\text{trap}} {\sim} n^{1.79}$. Float/exact agreement: 80/80.} \\
+\bottomrule
+\end{tabular}
+\caption{Hypograph construction on random planes, coefficients drawn uniformly from $\{-50,\dots,50\}$ with $c \neq 0$, medians over 10 seeds. $t_{\text{hull}}$ is the exact lower-hull envelope, $t_{\text{trap}}$ the exact trapezoid construction; ``float'' is both stages via Qhull. ``active'' is the number of planes appearing on the envelope.}
+\label{tab:env-random}
+\end{table}

@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrrrrrr}
+\toprule
+$n$ & inst. & triples & \multicolumn{2}{c}{alignments} & \multicolumn{2}{c}{3D cells} & slice cells \\
+& & $\binom{n}{3}$ & med & max & med & max & med \\
+\midrule
+3 & 20 & 1 & 0 & 0 & 26 & 26 & 13 \\
+4 & 20 & 4 & 2 & 3 & 84 & 89 & 23 \\
+5 & 20 & 10 & 8 & 13 & 178 & 248 & 36 \\
+6 & 20 & 20 & 23 & 28 & 435 & 481 & 52 \\
+7 & 20 & 35 & 43 & 57 & 885 & 1018 & 71 \\
+8 & 12 & 56 & 76 & 86 & 1633 & 1738 & 93 \\
+\bottomrule
+\end{tabular}
+\caption{Instance sizes on random general-position planes (seeds $1..20$; $1..12$ for $n=8$). ``slice cells'' is the number of trapezoids in the initial slice decomposition. Cell statistics are over instances that completed.}
+\label{tab:combinatorics}
+\end{table}

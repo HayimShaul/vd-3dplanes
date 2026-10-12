@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrrrrrr}
+\toprule
+$n$ & active & env.\ facets & facets$/n$ & cells & cells$/n$ & $t_{\text{hull}}$ (s) & $t_{\text{trap}}$ (s) \\
+\midrule
+4 & 4 & 2 & 0.50 & 10 & 2.5 & 0.000 & 0.001 \\
+8 & 8 & 9 & 1.12 & 44 & 5.5 & 0.001 & 0.010 \\
+16 & 16 & 23 & 1.44 & 170 & 10.6 & 0.010 & 0.087 \\
+24 & 24 & 38 & 1.58 & 334 & 13.9 & 0.037 & 0.285 \\
+32 & 32 & 53 & 1.66 & 502 & 15.7 & 0.087 & 0.650 \\
+48 & 48 & 85 & 1.77 & 961 & 20.0 & 0.316 & 2.090 \\
+64 & 64 & 115 & 1.80 & 1423 & 22.2 & 0.777 & 4.927 \\
+\midrule
+\multicolumn{8}{l}{All $n$ planes active in every instance. Fits: facets ${\sim}n^{1.42}$, cells ${\sim}n^{1.78}$. Nearest-site check: 0/10500 wrong.} \\
+\bottomrule
+\end{tabular}
+\caption{The Voronoi lifting: site $(a,b) \mapsto 2ax + 2by + z - (a^2{+}b^2) = 0$, sites drawn from $\{-200,\dots,200\}^2$, medians over 5 seeds. Every plane reaches the envelope, and the minimization diagram is the Voronoi diagram of the sites, so the envelope has $\Theta(n)$ complexity. The nearest-site check verifies that the ceiling of the cell containing a sample point is the plane of its nearest site.}
+\label{tab:env-voronoi}
+\end{table}

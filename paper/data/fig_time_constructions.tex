@@ -1,0 +1,55 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=6.2cm,
+    xmode=log, ymode=log, log basis x=10,
+    xlabel={number of planes $n$}, ylabel={median running time (s)},
+    xtick={3,4,6,8,12,16,24,32,48,64,96}, xticklabels={3,4,6,8,12,16,24,32,48,64,96},
+    ytick={1e-4,1e-3,1e-2,1e-1,1,1e1,1e2},
+    log ticks with fixed point,
+    xmin=2.7, xmax=150,
+    ymin=4e-4, ymax=4e2,
+    grid=both,
+    major grid style={line width=0.3pt, draw=gridgray},
+    minor grid style={line width=0.2pt, draw=gridgray, opacity=0.55},
+    axis lines=left, axis line style={draw=inktwo, line width=0.5pt},
+    tick label style={font=\footnotesize, color=inktwo},
+    label style={font=\small, color=ink},
+    legend cell align=left,
+    legend style={draw=none, fill=none, font=\footnotesize,
+                  at={{(0.5,-0.20)}}, anchor=north, row sep=1pt,
+                  /tikz/every even column/.append style={column sep=8pt}},
+    legend columns=2,
+]
+\addplot[serA, line width=0.9pt, mark=*, mark size=1.9pt]
+  coordinates {(3,0.00974126) (4,0.105319) (5,0.529164) (6,2.28555) (7,7.967) (8,28.2387)};
+\addlegendentry{VD of the arrangement, reference sweep}
+\addplot[serB, line width=0.9pt, mark=square*, mark size=1.7pt]
+  coordinates {(3,0.0124374) (4,0.147618) (5,0.797553) (6,3.62193) (7,14.6194) (8,41.5625)};
+\addlegendentry{VD of the arrangement, incremental sweep}
+\addplot[serC, line width=0.9pt, mark=triangle*, mark size=2.2pt]
+  coordinates {(3,0.0008735) (4,0.00217614) (5,0.00344401) (6,0.0053871) (7,0.00585255)};
+\addlegendentry{VD of the lower envelope (same instances)}
+\addplot[serC, line width=0.9pt, dashed, mark=triangle, mark size=2.2pt,
+         mark options={solid, fill=white}]
+  coordinates {(4,0.00166616) (8,0.00756478) (16,0.0246835) (24,0.0766006) (32,0.147123) (48,0.419906) (64,0.929787) (96,2.92514)};
+\addlegendentry{VD of the lower envelope (wider sampler)}
+\node[serB, font=\scriptsize, anchor=west] at (axis cs:8.8,91.44)
+  {$\propto n^{8.3}$};
+\node[serA, font=\scriptsize, anchor=west] at (axis cs:8.8,11.86)
+  {$\propto n^{8.0}$};
+\node[serC, font=\scriptsize, anchor=west] at (axis cs:102.72,4.388)
+  {$\propto n^{2.3}$};
+\end{axis}
+\end{tikzpicture}
+\caption{Median running time of the two constructions, log--log.  Both sweep
+paths and the solid envelope series are the general-position instances of
+Tables~\ref{tab:timing} and \ref{tab:hypograph} (coefficients in
+$\{-4,\dots,4\}$, $n \le 8$); the dashed envelope series is the wider sampler of
+Table~\ref{tab:env-random}, which reaches $n = 96$.  The two distributions agree
+where they overlap.  Exponents are least-squares fits over each series' own
+range; the sweep's is measured over $3 \le n \le 8$ and is not an asymptotic
+claim (Section~\ref{sec:bench-env-scaling}).}
+\label{fig:time-constructions}
+\end{figure}

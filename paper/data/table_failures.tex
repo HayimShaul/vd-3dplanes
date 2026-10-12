@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrrrrr}
+\toprule
+& & \multicolumn{2}{c}{incremental path} & \multicolumn{2}{c}{reference path} & \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+$n$ & inst. & class (a) & class (b) & class (a) & class (b) & completion rate \\
+\midrule
+3 & 20 & 1 & 0 & 1 & 0 & 95\% / 95\% \\
+4 & 20 & 4 & 1 & 4 & 0 & 75\% / 80\% \\
+5 & 20 & 5 & 2 & 5 & 0 & 65\% / 75\% \\
+6 & 20 & 6 & 3 & 6 & 0 & 55\% / 70\% \\
+7 & 20 & 8 & 6 & 9 & 0 & 30\% / 55\% \\
+8 & 12 & 6 & 3 & 7 & 0 & 25\% / 42\% \\
+\midrule
+all & 112 & 30 & 15 & 32 & 0 & 60\% / 71\% \\
+\bottomrule
+\end{tabular}
+\caption{Aborted runs by class. (a) face-extraction failure in the planar layer; (b) incremental-vs-reference divergence caught by the differential assertion. Completion rate is given as incremental / reference.}
+\label{tab:failures}
+\end{table}

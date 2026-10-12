@@ -1,0 +1,77 @@
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.49\textwidth}\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=5.1cm,
+    xmode=log, ymode=log, log basis x=10,
+    xlabel={number of planes $n$}, ylabel={median running time (s)},
+    xtick={4,8,16,32,64,96}, xticklabels={4,8,16,32,64,96},
+    ytick={1e-4,1e-3,1e-2,1e-1,1,1e1,1e2},
+    log ticks with fixed point,
+    xmin=3.6, xmax=115,
+    ymin=1e-4, ymax=2e1,
+    grid=both,
+    major grid style={line width=0.3pt, draw=gridgray},
+    minor grid style={line width=0.2pt, draw=gridgray, opacity=0.55},
+    axis lines=left, axis line style={draw=inktwo, line width=0.5pt},
+    tick label style={font=\footnotesize, color=inktwo},
+    label style={font=\small, color=ink},
+    legend cell align=left,
+    legend style={draw=none, fill=none, font=\footnotesize,
+                  at={{(0.03,0.97)}}, anchor=north west, row sep=1pt,
+                  /tikz/every even column/.append style={column sep=8pt}},
+    legend columns=1,
+    title={(a) random planes}, title style={font=\small, color=inktwo},
+]
+\addplot[serA, line width=0.9pt, mark=*, mark size=1.9pt] coordinates {(4,0.000210729) (8,0.00118501) (16,0.010316) (24,0.035423) (32,0.0877028) (48,0.30565) (64,0.724792) (96,2.41906)};
+\addlegendentry{exact lower hull}
+\addplot[serB, line width=0.9pt, mark=square*, mark size=1.7pt] coordinates {(4,0.00148226) (8,0.00639972) (16,0.0149908) (24,0.0409703) (32,0.0594197) (48,0.119924) (64,0.231151) (96,0.473851)};
+\addlegendentry{exact trapezoids}
+\addplot[serC, line width=0.9pt, mark=triangle*, mark size=2.2pt] coordinates {(4,0.000718652) (8,0.00221655) (16,0.00508758) (24,0.0123112) (32,0.0182174) (48,0.0418716) (64,0.0798031) (96,0.167312)};
+\addlegendentry{float (both stages)}
+\end{axis}
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{0.49\textwidth}\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=5.1cm,
+    xmode=log, ymode=log, log basis x=10,
+    xlabel={number of planes $n$}, ylabel={},
+    xtick={4,8,16,32,64}, xticklabels={4,8,16,32,64},
+    ytick={1e-4,1e-3,1e-2,1e-1,1,1e1,1e2},
+    log ticks with fixed point,
+    xmin=3.6, xmax=78,
+    ymin=1e-4, ymax=2e1,
+    grid=both,
+    major grid style={line width=0.3pt, draw=gridgray},
+    minor grid style={line width=0.2pt, draw=gridgray, opacity=0.55},
+    axis lines=left, axis line style={draw=inktwo, line width=0.5pt},
+    tick label style={font=\footnotesize, color=inktwo},
+    label style={font=\small, color=ink},
+    legend cell align=left,
+    legend style={draw=none, fill=none, font=\footnotesize,
+                  at={{(0.03,0.97)}}, anchor=north west, row sep=1pt,
+                  /tikz/every even column/.append style={column sep=8pt}},
+    legend columns=1,
+    title={(b) Voronoi lifting}, title style={font=\small, color=inktwo},
+]
+\addplot[serA, line width=0.9pt, mark=*, mark size=1.9pt] coordinates {(4,0.000171292) (8,0.00114329) (16,0.0103008) (24,0.0373715) (32,0.0872819) (48,0.316407) (64,0.776608)};
+\addlegendentry{exact lower hull}
+\addplot[serB, line width=0.9pt, mark=square*, mark size=1.7pt] coordinates {(4,0.00137033) (8,0.0103296) (16,0.0869927) (24,0.285026) (32,0.650248) (48,2.09001) (64,4.92729)};
+\addlegendentry{exact trapezoids}
+\end{axis}
+\end{tikzpicture}
+\end{minipage}
+\caption{The envelope pipeline's two exact stages, log--log.  \textbf{(a)} On
+random planes the $O(n^4)$ hull enumeration overtakes the trapezoid
+construction at $n \approx 26$ and is $5.1\times$ its cost by
+$n = 96$, because the envelope --- and therefore the trapezoid work --- stops
+growing while the triple enumeration does not.  \textbf{(b)} On the Voronoi
+lifting the ordering is reversed at every size: all $n$ planes stay active, so
+the trapezoid stage has $\Theta(n)$ envelope features to decompose and dominates
+throughout.  Panel (a) also shows the price of exactness, as the gap between the
+two exact stages and the float series.}
+\label{fig:time-stages}
+\end{figure}

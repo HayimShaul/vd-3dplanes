@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrrrrrr}
+\toprule
+& \multicolumn{3}{c}{reference path (s)} & \multicolumn{3}{c}{incremental path (s)} & \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+$n$ & median & max & per event & median & max & per event & ratio \\
+\midrule
+3 & 0.010 & 0.010 & 0.0097 & 0.012 & 0.013 & 0.0124 & 1.28 \\
+4 & 0.105 & 0.165 & 0.0154 & 0.148 & 0.176 & 0.0216 & 1.40 \\
+5 & 0.529 & 0.775 & 0.0279 & 0.798 & 1.092 & 0.0394 & 1.51 \\
+6 & 2.286 & 3.335 & 0.0548 & 3.622 & 4.776 & 0.0785 & 1.58 \\
+7 & 7.967 & 12.791 & 0.1077 & 14.619 & 19.779 & 0.1783 & 1.83 \\
+8 & 28.239 & 32.618 & 0.2097 & 41.563 & 52.905 & 0.3012 & 1.47 \\
+\midrule
+\multicolumn{8}{l}{Power-law fit of median time: reference $t \propto n^{8.0}$, incremental $t \propto n^{8.3}$.} \\
+\bottomrule
+\end{tabular}
+\caption{Wall-clock time, single-threaded. ``per event'' is median total time divided by the number of events. ``ratio'' is incremental median over reference median: values above $1$ mean the incremental path is slower, because it also recomputes the slice to assert agreement.}
+\label{tab:timing}
+\end{table}

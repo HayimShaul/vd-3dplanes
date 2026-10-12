@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrrrrrrr}
+\toprule
+& & & envelope & \multicolumn{2}{c}{hypograph cells} & hypograph & full sweep & \\
+\cmidrule(lr){5-6}
+$n$ & inst. & active & facets & med & max & time (s) & time (s) & speed-up \\
+\midrule
+3 & 20 & 3 & 1 & 5 & 5 & 0.0009 & 0.02 & ${\sim}24\times$ \\
+4 & 20 & 4 & 2 & 8 & 10 & 0.0022 & 0.27 & ${\sim}119\times$ \\
+5 & 20 & 5 & 3 & 11 & 15 & 0.0034 & 1.47 & ${\sim}435\times$ \\
+6 & 20 & 5 & 4 & 13 & 21 & 0.0054 & 6.43 & ${\sim}847\times$ \\
+7 & 20 & 5 & 4 & 14 & 26 & 0.0059 & 21.80 & ${\sim}3305\times$ \\
+\midrule
+\multicolumn{9}{l}{Completed: hypograph 100/100; full sweep 64/100. Float/exact disagreements: 0.} \\
+\bottomrule
+\end{tabular}
+\caption{The hypograph construction on the same random instances as Table~\ref{tab:timing} (seeds $1..20$). ``active'' is the number of planes that appear on the lower envelope; ``facets'' the number of envelope vertices (dual lower-hull triangles). ``hypograph time'' is exact envelope plus exact hypograph VD; ``full sweep time'' and the speed-up are medians over the instances where the sweep also completed.}
+\label{tab:hypograph}
+\end{table}

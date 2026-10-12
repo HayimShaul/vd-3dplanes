@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrrrrr}
+\toprule
+coeff.\ bound & inst. & disagree & active set & facet set & hypograph VD & exact/float \\
+\midrule
+$4$ & 30 & 3 & 1 & 3 & 0 & $4.0\times$ \\
+$50$ & 30 & 0 & 0 & 0 & 0 & $5.2\times$ \\
+$1\,000$ & 30 & 0 & 0 & 0 & 0 & $6.2\times$ \\
+$1\,000\,000$ & 30 & 0 & 0 & 0 & 0 & $8.8\times$ \\
+$1\,000\,000\,000\,000$ & 30 & 0 & 0 & 0 & 0 & $12.4\times$ \\
+\bottomrule
+\end{tabular}
+\caption{Exact arithmetic against Qhull as the coefficient range widens; $n \in \{8,16,32\}$, 10 seeds each, so 30 instances per row. Columns 4--6 count the instances whose active plane set, lower-hull facet set, or final hypograph VD differed. Disagreements occur only at the \emph{narrowest} coefficient range, where degeneracies are common; see Remark~\ref{rem:degenerate-facets}.}
+\label{tab:env-arith}
+\end{table}

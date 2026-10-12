@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrrrr}
+\toprule
+$n$ & triples (s) & alignments (s) & one slice VD (s) & total sweep (s) & event gen.\ share \\
+\midrule
+3 & 0.00005 & 0.0009 & 0.0026 & 0.012 & 7.6\% \\
+4 & 0.00018 & 0.0047 & 0.0062 & 0.138 & 3.7\% \\
+5 & 0.00045 & 0.0165 & 0.0144 & 0.819 & 2.1\% \\
+6 & 0.00086 & 0.0473 & 0.0306 & 3.348 & 1.4\% \\
+7 & 0.00150 & 0.1130 & 0.0571 & 11.951 & 1.0\% \\
+\bottomrule
+\end{tabular}
+\caption{Cost breakdown (medians, 8 seeds per $n$, reference path). ``one slice VD'' is a single from-scratch \texttt{compute\_vd\_at\_z}. The last column is event generation as a fraction of total sweep time.}
+\label{tab:breakdown}
+\end{table}
