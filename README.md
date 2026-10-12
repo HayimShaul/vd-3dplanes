@@ -144,12 +144,71 @@ input planes:
   cell 69: floor=P2:-x+3y+3z=0 ceiling=P4:x-3y-z+1=0 walls=[P-1:x-12/5z-9/10=0] z=(-1/2, +∞)
 ```
 
+## Lower-envelope hypograph VD
+
+Standalone construction of only the 3D cells that are **unbounded from below**
+(`floor=None`), without running the full z-sweep. Non-vertical planes
+(`c ≠ 0`) are dualized to points `(A, B, C)` for `z = A x + B y + C`; the
+lower convex hull of those points is the lower envelope. Its xy minimization
+diagram is then split into y-parallel trapezoids and lifted to hypograph
+prisms: each cell has `floor=None`, `ceiling` = the envelope plane of that
+face, and vertical walls (`x = const` plus walls through the diagram edges).
+
+Float path uses scipy’s Qhull; exact path uses `Fraction` and is checked
+against the float reference. Details: [docs/lower_envelope.md](docs/lower_envelope.md).
+
+```bash
+# lower envelope (float), interactive blue surface
+python -m vd3d.lower_envelope examples/three_planes.txt --gui
+
+# exact envelope, compared to float (orange × = float vertices)
+python -m vd3d.lower_envelope examples/three_planes.txt --exact --gui
+
+# hypograph VD (float): browse cells under the envelope
+python -m vd3d.lower_envelope examples/three_planes.txt --vd --gui
+
+# exact hypograph VD vs float
+python -m vd3d.lower_envelope examples/three_planes.txt --exact --vd --gui
+
+# random instance
+python -m vd3d.lower_envelope --random-planes 4 --seed 42 --exact --vd --gui
+```
+
+### Example: `examples/three_planes.txt --exact --vd`
+
+```bash
+python -m vd3d.lower_envelope examples/three_planes.txt --exact --vd
+```
+
+```text
+planes: 3
+active: 3
+diagram_edges: 3
+trapezoids: 4
+cells: 4
+arithmetic: exact Fraction
+
+hypograph cells (floor=unbounded):
+  cell 0: ceiling=P1:x+z-4=0 plane_index=0 x=(-∞, 1) walls=2
+  cell 1: ceiling=P2:y+z-5=0 plane_index=1 x=(-∞, 1) walls=2
+  cell 2: ceiling=P1:x+z-4=0 plane_index=0 x=(1, +∞) walls=2
+  cell 3: ceiling=P3:x+y+z-6=0 plane_index=2 x=(1, +∞) walls=2
+float vs exact hypograph VD: OK
+matched cells: 4
+max x-boundary error: 0.000e+00
+  float and exact hypograph VDs match
+```
+
+With `--gui`, grey input planes, blue envelope, all hypograph cells faint red,
+selected cell strong red (`n`/`p` cells, `+/-` zoom, arrows rotate, `q` quit).
+
 ## Conventions and invariants
 
 - [docs/conventions.md](docs/conventions.md) — axes, "vertical", exact arithmetic, general position
 - [docs/geometry.md](docs/geometry.md) — plane equation, orientation, intersections, slices
 - [docs/arrangement2d.md](docs/arrangement2d.md) — DCEL, CCW order, Euler characteristic
 - [docs/vertical_decomposition.md](docs/vertical_decomposition.md) — y-parallel walls, trapezoid cells
+- [docs/lower_envelope.md](docs/lower_envelope.md) — dual hull, hypograph VD of cells with floor=None
 - [docs/zone.md](docs/zone.md) — query-line zone, supporting-line opposite vertices
 - [docs/events.md](docs/events.md) — intersection lines, triple events, sort key
 - [docs/alignment.md](docs/alignment.md) — y-parallel walls, alignment oracle vs zone
@@ -163,6 +222,7 @@ input planes:
 
 ```text
 vd3d/                 library (kernel packages must not import viz)
+  lower_envelope/     dual hull + hypograph VD (float + exact)
 docs/                 human-readable notes, one concern per file
 tests/unit/           exact, non-graphical tests
 tests/visual/         write PNG + caption under artifacts/visual/

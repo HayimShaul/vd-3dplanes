@@ -12,6 +12,7 @@ _KERNEL_PACKAGES = (
     "events",
     "sweep",
     "cells3d",
+    "lower_envelope",
 )
 _TWOD_PACKAGES = (
     "arrangement2d",
@@ -20,11 +21,19 @@ _TWOD_PACKAGES = (
 )
 _FORBIDDEN_IN_KERNEL = ("matplotlib", "vd3d.viz", "numpy")
 _FORBIDDEN_IN_2D = ("vd3d.events", "vd3d.sweep", "vd3d.cells3d")
+# Float reference modules under lower_envelope may use numpy/scipy.
+_FLOAT_SUFFIX = "_float.py"
 
 
 def _iter_python_files(package: str):
     root = _REPO / package
-    yield from root.rglob("*.py")
+    for path in root.rglob("*.py"):
+        if package == "lower_envelope" and (
+            path.name.endswith(_FLOAT_SUFFIX) or path.name == "__main__.py"
+        ):
+            # Float refs may use numpy/scipy; __main__ is CLI glue (may import viz).
+            continue
+        yield path
 
 
 def _imported_modules(path: Path) -> set[str]:
